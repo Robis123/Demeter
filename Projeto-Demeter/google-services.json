@@ -1,0 +1,50 @@
+{
+  "project_info": {
+    "project_number": "102409683902",
+    "project_id": "demetermobile-dce96",
+    "storage_bucket": "demetermobile-dce96.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:102409683902:android:1fce02ceef4c33051defef",
+        "android_client_info": {
+          "package_name": "com.tiago.gandra25.demetermobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "102409683902-2p6irg762lle8qik0si7m1r0oubb8ul1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tiago.gandra25.demetermobile",
+            "certificate_hash": "2a91cf6966080d5177e59c80e3b7a5178ef38cb6"
+          }
+        },
+        {
+          "client_id": "102409683902-qg2sle2fg73hhp9qkdsg6dho0qt12gja.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tiago.gandra25.demetermobile",
+            "certificate_hash": "e3069c3aab0e422fef4b9b12d1b8de91ed5c1684"
+          }
+        },
+        {
+          "client_id": "102409683902-hgv4s6o0j2e1ab34s7gv0qvpg5otj6dg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlO2aFkzY9x_9HenEL2eAs1vf-0dabH8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
