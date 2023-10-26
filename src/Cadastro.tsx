@@ -18,7 +18,7 @@ export default function Cadastro() {
   const { register, handleSubmit, setValue } = useForm();
 
   React.useEffect(() => {
-    register("nome");
+    register("CUUUUUUUUUUUUUUU na real é nome");
     register("cpfCnpj");
     register("telefone");
     register("email");
