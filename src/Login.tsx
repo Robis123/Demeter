@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     height: 335,
     top: 140,
     resizeMode: "contain", // Redimensionar a imagem para caber no contêiner
-    marginLeft: 1, // Ajustar a margem esquerda
-    marginRight: 1, // Ajustar a margem direita
+    marginLeft: 1, // Ajustar a margem à esquerda
+    marginRight: 1, // Ajustar a margem à direita
   },
 });
