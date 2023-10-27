@@ -2,8 +2,9 @@ import UserContext from "./UserContext";
 import AuthContext from "./AuthContext";
 import { StyleSheet, View, Image, Text } from "react-native";
 import { Color, Border, FontFamily, FontSize, Padding } from "../GlobalStyles";
-
+import {app, db, getFirestore, collection, addDoc} from "./firebase/firebase.js"
 import React from "react";
+import {useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import { Button, TextInput } from "react-native-paper";
 import {
@@ -11,48 +12,82 @@ import {
   GoogleSigninButton,
 } from "@react-native-google-signin/google-signin";
 
+
+
 export default function Cadastro() {
+  // Essas variáveis aqui são importantes pra mostrar o que o usuário está digitando no campo
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [cnpj, setCnpj] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+
+  // Essa função aqui que vai adicionar os elementos em uma coleção do banco de dados, no caso dessa, produtores
+  const addProdutor = async () => {
+  
+          try {
+            const docRef = await addDoc(collection(db, "produtores"), {
+              nome: nome,
+              cpf: cpf,
+              cnpj: cnpj,
+              telefone: telefone,
+              email: email
+            });
+
+            console.log("Document written with ID: ", docRef.id);
+          } catch (e) {
+            console.error("Error adding document: ", e);
+}
+  }
+
   const { signOut } = React.useContext(AuthContext);
 
   const user = React.useContext(UserContext);
   const { register, handleSubmit, setValue } = useForm();
 
   React.useEffect(() => {
-    register("CUUUUUUUUUUUUUUU na real é nome");
+    register(" nome");
     register("cpfCnpj");
     register("telefone");
     register("email");
   }, [register]);
 
-  const onSubmit = (data) => console.log(data);
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Cadastro de dados</Text>
       <TextInput
         style={styles.input}
-        label={user.displayName}
-        onChangeText={(text) => setValue("nome", text)}
+        label="Nome"
+        // Tem que colocar o value aqui 
+        value={nome}
+        onSubmitEditing={addProdutor}
+        onChangeText={(text) => setNome(text)}
       />
       <TextInput
         style={styles.input}
         label="CPF/CNPJ"
-        onChangeText={(text) => setValue("cpfCnpj", text)}
+        // Não coloquei aqui pq tem q resolver ainda se vai ser cpf e cnpj e um campo só (usando máscaras), 
+        // ou separados
       />
       <TextInput
         style={styles.input}
         label="Telefone"
-        onChangeText={(text) => setValue("telefone", text)}
+        value={telefone}
+        onSubmitEditing={addProdutor}
+        onChangeText={(text) => setTelefone(text)}
       />
       <TextInput
         style={styles.input}
         label="Email"
-        onChangeText={(text) => setValue("email", text)}
+        value={email}
+        onSubmitEditing={addProdutor}
+        onChangeText={(text) => setEmail(text)}
       />
       <Button
         style={styles.button}
         mode="contained"
-        onPress={handleSubmit(onSubmit)}
+        onPress={addProdutor}
       >
         Cadastrar
       </Button>

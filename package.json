@@ -19,6 +19,7 @@
     "expo-dev-client": "~2.4.11",
     "expo-image": "^1.5.1",
     "expo-status-bar": "~1.6.0",
+    "firebase": "^10.5.1",
     "native-base": "^3.4.28",
     "react": "18.2.0",
     "react-dom": "18.2.0",
