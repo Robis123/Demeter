@@ -52,7 +52,6 @@ export default function Cadastro() {
     register("email");
   }, [register]);
 
-
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Cadastro de dados</Text>
@@ -72,10 +71,11 @@ export default function Cadastro() {
       />
       <TextInput
         style={styles.input}
-        label="Telefone"
-        value={telefone}
+        label="Numero"
+        value={formatPhoneNumber(telefone)}
         onSubmitEditing={addProdutor}
         onChangeText={(text) => setTelefone(text)}
+        keyboardType="numeric" 
       />
       <TextInput
         style={styles.input}
@@ -97,6 +97,21 @@ export default function Cadastro() {
     </View>
   );
 }
+
+function formatPhoneNumber(value) {
+  if (!value) return value;
+  const phoneNumber = value.replace(/[^\d]/g, '');
+  const phoneNumberLength = phoneNumber.length;
+
+  if (phoneNumberLength <= 2) return phoneNumber; // Trata números com até 2 dígitos
+
+  if (phoneNumberLength <= 7) {
+    return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}`;
+  }
+
+  return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}-${phoneNumber.slice(7, 11)}`;
+}
+
 
 const styles = StyleSheet.create({
   container: {
