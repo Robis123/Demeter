@@ -12,6 +12,7 @@ import {
 } from "@react-native-google-signin/google-signin";
 
 import { TEMAS } from "./src/estilos/temas";
+import Rotas from "./src/rotas";
 
 export default function App() {
   type User = {
@@ -92,7 +93,7 @@ export default function App() {
       <StatusBar backgroundColor={TEMAS.colors.green[500]} />
       <UserContext.Provider value={user}>
         <AuthContext.Provider value={{ signOut }}>
-          <Cadastro />
+          <Rotas />
         </AuthContext.Provider>
       </UserContext.Provider>
     </NativeBaseProvider>

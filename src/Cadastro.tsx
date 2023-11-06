@@ -9,14 +9,10 @@ import { useForm } from "react-hook-form";
 import { Button, TextInput } from "react-native-paper";
 import { KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-} from "@react-native-google-signin/google-signin";
 
 
 
-export default function Cadastro() {
+export default function Cadastro({ navigation }) {
   // Essas variáveis aqui são importantes pra mostrar o que o usuário está digitando no campo
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
@@ -103,6 +99,12 @@ export default function Cadastro() {
           onPress={addProdutor}
         >
           Cadastrar
+        </Button>
+        <Button 
+          style={styles.button}
+          onPress={() => navigation.navigate(null)}
+        >
+          ENTRAAAA
         </Button>
         <Button style={styles.button} onPress={signOut}>
           Sign Out
