@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "LoginReact",
+    "slug": "LoginReact",
+    "plugins": ["@react-native-google-signin/google-signin"],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.tiago.gandra25.LoginReact"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3d743071-8c1d-4aad-b13c-5aba84c989fe"
+      }
+    }
+  }
+}

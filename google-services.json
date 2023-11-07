@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "221312520191",
+    "project_id": "demeter-2a73f",
+    "storage_bucket": "demeter-2a73f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221312520191:android:dc6e46df958e635e9361ca",
+        "android_client_info": {
+          "package_name": "com.tiago.gandra25.LoginReact"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "221312520191-9urevtcpcb6npvecnl65jiihrm58almr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tiago.gandra25.LoginReact",
+            "certificate_hash": "0b5ec49a776085cd3c8d3d9513a17249acebbfd3"
+          }
+        },
+        {
+          "client_id": "221312520191-skg8v2hfbr0s0uqndv8096jlg84bdi2t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tiago.gandra25.LoginReact",
+            "certificate_hash": "e97a11468140eba584f5d2f982913009d0bcd3f0"
+          }
+        },
+        {
+          "client_id": "221312520191-u7n22gjkci5o8u99ng14faaaapsg26gs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVWojcjf0-9St-qJObitQ_Gi1bz8e9huA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "221312520191-u7n22gjkci5o8u99ng14faaaapsg26gs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
