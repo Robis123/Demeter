@@ -7,8 +7,16 @@ import React, { useState, useEffect } from 'react';
 import auth from '@react-native-firebase/auth';
 import Login from "./src/login";
 import { AuthContext } from './src/context/authContext';
+import  UserContext  from './src/context/userContext'
 
 export default function App() {
+
+  type User = {
+    displayName: string;
+    photoURL: string;
+    // include other properties as needed
+  };
+
   GoogleSignin.configure({
     webClientId: '221312520191-u7n22gjkci5o8u99ng14faaaapsg26gs.apps.googleusercontent.com',
   });
@@ -78,11 +86,13 @@ export default function App() {
     )
   }
   return (
-    <AuthContext.Provider value={{ signOut }}>
-      <NativeBaseProvider theme={TEMAS}>
-        <StatusBar backgroundColor={TEMAS.colors.blue[300]} />
-        <Rotas />
-      </NativeBaseProvider>
-    </AuthContext.Provider>
+    <UserContext.Provider value={user}>
+      <AuthContext.Provider value={{ signOut }}>
+        <NativeBaseProvider theme={TEMAS}>
+          <StatusBar backgroundColor={TEMAS.colors.blue[300]} />
+          <Rotas />
+        </NativeBaseProvider>
+      </AuthContext.Provider>
+    </UserContext.Provider>
   );
 }
