@@ -6,6 +6,7 @@ import Image3 from "../assets/image3.png";
 import Image4 from "../assets/image4.png";
 import Image5 from "../assets/image5.png";
 import Image6 from "../assets/image6.png";
+import React from "react";
 
 export default function Home() {
   return (
@@ -14,7 +15,7 @@ export default function Home() {
       <ScrollView flex={1} showsVerticalScrollIndicator={false}>
           <VStack flex={2} p={5}>
             <HStack>
-              <Avatar ml={2} mt={5} mr={5} size='2xl' source={Image1} />
+              <Avatar ml={2} mt={5} mr={5} size='2xl' source={Image1}/>
               <Avatar ml={2} mt={5} size='2xl' source={Image2}/>
             </HStack>
             <HStack mt={5}>
