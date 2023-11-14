@@ -32,9 +32,14 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "scheme": "com.Demeter",
     "extra": {
       "eas": {
         "projectId": "3d743071-8c1d-4aad-b13c-5aba84c989fe"
+      },
+      "googleSignIn": {
+        "apiKey": "AIzaSyBVWojcjf0-9St-qJObitQ_Gi1bz8e9huA",
+        "behavior": "web"
       }
     }
   }
