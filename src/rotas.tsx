@@ -16,12 +16,12 @@ export default function Rotas() {
           name="Login"
           component={Login}
           options={{ headerShown: false }}
-        />
+  />*/}
         <Tab.Screen
           name="Cadastro"
           component={Cadastro}
           options={{ headerShown: false }}
-        /> */}
+        />
         <Tab.Screen
           name="Tabs"
           component={Tabs}
