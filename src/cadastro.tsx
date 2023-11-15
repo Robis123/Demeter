@@ -100,7 +100,10 @@ export default function Cadastro({ navigation }) {
       <Button
         style={styles.button}
         mode="contained"
-        onPress={addProdutor}
+        onPress={() => {
+          addProdutor();
+          navigation.navigate("Tabs");
+        }}
       >
         Cadastrar
       </Button>
