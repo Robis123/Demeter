@@ -1,4 +1,4 @@
-import { Avatar, Box, Radio, ScrollView, HStack, Button, Image, VStack, Input } from "native-base";
+import { Avatar, Box, Radio, ScrollView, HStack, Button, Image, VStack, Input, Flex } from "native-base";
 import { Titulo } from "../components/titulo";
 import { Botao } from "../components/botao";
 import { EntradaTexto } from "../components/entradaTexto";
@@ -16,6 +16,9 @@ import Image6 from "../assets/image6.png";
 export default function Cadastro({ navigation }) {
   const [numSecao, setNumSecao] = useState(0);
   const [selectedValue, setSelectedValue] = useState(null); // Adicione esta linha
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
+  const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+
 
   function avancarSecao() {
     if (numSecao < secoes.length - 1) {
@@ -42,36 +45,38 @@ export default function Cadastro({ navigation }) {
         pl={5}
         justifyContent="center"
       >
+      <Flex direction="row" wrap="wrap" alignItems='center' justifyContent='center'>
         {secoes[numSecao]?.entradaCategoria?.map((entrada) => {
           return (
-            <HStack>
-              <VStack>
-                <Button p={0} m={3} borderRadius={100} onPress={() => avancarSecao()} bgColor="blue.400">
-                  <Image borderRadius={100}  source={
-                    
-                    
-                    entrada.image} alt="Alternate Text" size="xl" />
-                </Button>
-                <Titulo>{entrada.categoria}</Titulo>
-              </VStack>
-              
-            </HStack>
-          );
-        })}
-        {secoes[numSecao]?.entradaProdutos?.map((entrada) => {
-          return (
-            <HStack>
-              <Button p={0} m={3} borderRadius={100} onPress={() => avancarSecao()} bgColor="blue.400">
-                <Image borderRadius={100} source={{
-                  uri: "https://www.w3schools.com/css/img_lights.jpg"}} alt="Alternate Text" size="xl" />
+            <VStack >
+              <Button p={0} mx={3} my={0} borderRadius={100} onPress={() => {avancarSecao(); setCategoriaSelecionada(entrada.categoria);}} bgColor="blue.400">
+                <Image borderRadius={100}  source={
+                  entrada.image} alt="Alternate Text" size="xl" />
               </Button>
-              <Button p={0} m={3} borderRadius={100} onPress={() => avancarSecao()} bgColor="blue.400">
-                <Image borderRadius={100} source={{
-                  uri: "https://www.w3schools.com/css/img_lights.jpg"}} alt="Alternate Text" size="xl" />
-              </Button>
-            </HStack>
-          );
+              <Titulo mb={10} mt={0}>{entrada.categoria}</Titulo>
+            </VStack>
+          );  
         })}
+      </Flex>  
+      {secoes[numSecao]?.entradaProdutos?.filter(produto => produto.categoria === categoriaSelecionada).map((entrada) => {
+        return (
+          <VStack>
+            <Flex direction="row" wrap="wrap" alignItems='center' justifyContent='center'>
+              {entrada.tiposProdutos.map((tipoProduto) => {
+                return (
+                  <VStack>
+                    <Button p={0} mx={3} my={0} borderRadius={100} onPress={() => {avancarSecao(); setProdutoSelecionado(tipoProduto.produto);}} bgColor="blue.400">
+                      <Image borderRadius={100}  source={tipoProduto.image} alt="Alternate Text" size="xl" />
+                    </Button>
+                    <Titulo mb={10} mt={0}>{tipoProduto.produto}</Titulo>
+                  </VStack>
+                )
+              })}
+            </Flex>
+          </VStack>
+        )
+      })}
+        
         {secoes[numSecao]?.entradaAdicionar?.map((entrada) => {
           return (
             <VStack flex={1} alignItems='center' >
