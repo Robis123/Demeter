@@ -3,7 +3,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import Home from "./home";
 import Perfil from "./perfil";
-import Nfs from "./consulta";
+import Nfs from "./nfs";
 import React from "react";
 
 const Tab = createBottomTabNavigator();

@@ -243,7 +243,7 @@ const secoes = [
     ],
   },
   {
-    id: 2,
+    id: 3,
     titulo: "Cadastro de Produto: ",
     entradaAdicionar: [
       {

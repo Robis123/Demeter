@@ -20,7 +20,7 @@ export function Botao({
       mt={7}
       borderRadius="lg"
       _text={{ color: "white" }}
-      shadow={3}
+      shadow={8}
       {...rest}
     >
       {children}
