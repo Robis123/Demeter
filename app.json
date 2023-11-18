@@ -5,7 +5,7 @@
     "plugins": [
       "@react-native-google-signin/google-signin"
     ],
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -21,13 +21,13 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 1,
+      "versionCode": 3,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.tiago.gandra25"
+      "package": "com.tiago.gandra25.LoginReact"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -41,6 +41,7 @@
         "apiKey": "AIzaSyBVWojcjf0-9St-qJObitQ_Gi1bz8e9huA",
         "behavior": "web"
       }
-    }
+    },
+    "owner": "tiago.gandra25"
   }
 }

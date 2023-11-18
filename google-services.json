@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "221312520191-qlun86kkhg7278lthk3i7lhjuh80jp9q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tiago.gandra25.LoginReact",
+            "certificate_hash": "9c190bc47ab245a0aff1db470c60523ce851f614"
+          }
+        },
+        {
           "client_id": "221312520191-skg8v2hfbr0s0uqndv8096jlg84bdi2t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
