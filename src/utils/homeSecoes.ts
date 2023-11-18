@@ -248,7 +248,6 @@ const secoes = [
     entradaAdicionar: [
       {
         id: 1,
-
       },
     ],
   },
