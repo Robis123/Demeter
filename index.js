@@ -11,8 +11,6 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
-const allowed = process.env.REGISTRAR;
-
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", '*');
     res.header(
@@ -30,12 +28,14 @@ app.use((req, res, next) => {
     app.use(cors());
     next();
 });
-app.use('/', routes);
+app.use('/',routes);
+console.log(routes)
 
 /**
  * Lida com erro 404: Recurso não encontrado
  */
 app.use((req, res, next) => {
+    console.log('cuu')
     const error = new Error("Not Found");
     error.status = 404;
     next(error);
@@ -52,5 +52,6 @@ app.use((err, req, res, next) => {
         },
     });
 });
+
 
 app.listen(3000, () => { console.log("Servidor escutando na porta 3000") });
