@@ -48,7 +48,7 @@ export default function Cadastro() {
                 <Flex direction="row" wrap="wrap" alignItems='center' justifyContent='center'>
                   {entrada.tiposProdutos.map((tipoProduto) => {
                     return (
-                      <VStack>
+                      <VStack alignItems='center'>
                         <Button p={0} mx={3} my={0} borderRadius={100} onPress={() => {avancarSecao(); setProdutoSelecionado(tipoProduto);}} bgColor="blue.400">
                           <Image borderRadius={100}  source={tipoProduto.image} alt="Alternate Text" size="xl" />
                         </Button>
