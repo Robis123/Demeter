@@ -4,25 +4,26 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
-      "start": "node ./index.js"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node ./index.js"
     },
     "repository": {
-      "type": "git",
-      "url": "https://git.iti.gov.br/liverson.severo/registrar-back"
+        "type": "git",
+        "url": "https://git.iti.gov.br/liverson.severo/registrar-back"
     },
     "author": "CGICP",
     "license": "ISC",
     "dependencies": {
-      "axios": "^1.6.0",
-      "cookie-parser": "^1.4.6",
-      "cors": "^2.8.5",
-      "dotenv": "^16.3.1",
-      "express": "^4.18.2",
-      "jsonwebtoken": "^9.0.2",
-      "jwk-to-pem": "^2.0.5",
-      "morgan": "^1.10.0",
-      "multer": "^1.4.5-lts.1"
+        "axios": "^1.6.0",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "html-pdf": "^3.0.1",
+        "jsonwebtoken": "^9.0.2",
+        "jwk-to-pem": "^2.0.5",
+        "morgan": "^1.10.0",
+        "multer": "^1.4.5-lts.1",
+        "puppeteer": "^21.5.2"
     }
-  }
-  
+}

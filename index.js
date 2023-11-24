@@ -4,7 +4,6 @@ const cookieParser = require("cookie-parser");
 require('dotenv').config({ path: './.env' });
 const routes = require('./src/routes');
 const cors = require('cors');
-
 const app = express();
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -20,7 +19,6 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", true);
     if (req.method === "OPTIONS") {
         // Verificar se não usamos outros verbos
-        app.use(cors({ origin: alowed, credentials: true }));
         res.header("Access-Control-Allow-Methods", "POST, GET");
         // res.header("Access-Control-Allow-Credentials", true);
         return res.status(200).json({});
