@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const route = express.Router();
-import {htmlPDF} from './template/gerarPDF.js'
+const { htmlPDF } = require('../template/gerarPDF.js');
 
 const app = express();
 app.use(express.json());
