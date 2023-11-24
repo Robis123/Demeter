@@ -10,6 +10,7 @@ function gerarPDF(htmlString, outputPath) {
   });
 }
 
+export function htmlPDF(req){
 // Exemplo de uso:
 const htmlContent = `<!-- Header -->
 
@@ -826,4 +827,4 @@ const htmlContent = `<!-- Header -->
 `;
 const outputPath = 'qualquer.pdf';
 
-gerarPDF(htmlContent, outputPath);
+gerarPDF(htmlContent, outputPath);}
