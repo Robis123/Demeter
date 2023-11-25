@@ -23,6 +23,8 @@ function htmlPDF(req){
 // Exemplo de uso:
 serie = getRandomHash()
 vl_total = req.body.vl_total
+pesoliquido = (10 * req.body.nu_transport_amount_transported_volumes)
+pesobruto = pesoliquido + (0.100 * req.body.nu_transport_amount_transported_volumes)
 const htmlContent = `<!-- Header -->
 
 <style type="text/css">
@@ -288,7 +290,6 @@ const htmlContent = `<!-- Header -->
     .nfeArea .freteConta .border {
         width: 5mm;
         height: 5mm;
-        float: right;
         text-align: center;
         line-height: 5mm;
         border: 1px solid black;
@@ -476,7 +477,7 @@ const htmlContent = `<!-- Header -->
                     </td>
                     <td style="width: 64.3mm">
                         <span class="nf-label">CNPJ</span>
-                        <span class="info">`+req.body.nl_company_cnpj_cpf+`</span>
+                        <span class="info">12.123.123/1234-12</span>
                     </td>
                 </tr>
             </tbody>
@@ -497,7 +498,7 @@ const htmlContent = `<!-- Header -->
                                     </td>
                                     <td style="width: 40mm">
                                         <span class="nf-label">CNPJ/CPF</span>
-                                        <span class="info">[nl_client_cnpj_cpf]</span>
+                                        <span class="info">`+req.body.nl_company_cnpj_cpf+`</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -561,7 +562,7 @@ const htmlContent = `<!-- Header -->
                     </td>
                     <td>
                         <span class="nf-label">HORA ENTR./SAÍDA</span>
-                        <span id="info">[hr_input_output]</span>
+                        <span id="info"></span>
                     </td>
                 </tr>
             </tbody>
@@ -663,54 +664,54 @@ const htmlContent = `<!-- Header -->
                 <tr>
                     <td>
                         <span class="nf-label">RAZÃO SOCIAL</span>
-                        <span class="info">[ds_transport_carrier_name]</span>
+                        <span class="info">Deméter Transportadora</span>
                     </td>
                     <td class="freteConta" style="width: 32mm">
                         <span class="nf-label">FRETE POR CONTA</span>
                         <div class="border">
-                            <span class="info">[ds_transport_code_shipping_type]</span>
+                            <span class="info">1</span>
                         </div>
                         <p>0 - Emitente</p>
                         <p>1 - Destinatário</p>
                     </td>
                     <td style="width: 17.3mm">
                         <span class="nf-label">CÓDIGO ANTT</span>
-                        <span class="info">[ds_transport_rntc]</span>
+                        <span class="info">049856894(homol)</span>
                     </td>
                     <td style="width: 24.5mm">
                         <span class="nf-label">PLACA</span>
-                        <span class="info">[ds_transport_vehicle_plate]</span>
+                        <span class="info">HMJ-0298</span>
                     </td>
                     <td style="width: 11.3mm">
                         <span class="nf-label">UF</span>
-                        <span class="info">[ds_transport_vehicle_uf]</span>
+                        <span class="info">DF</span>
                     </td>
                     <td style="width: 29.5mm">
                         <span class="nf-label">CNPJ/CPF</span>
-                        <span class="info">[nl_transport_cnpj_cpf]</span>
+                        <span class="info">12.123.123/1234-12</span>
                     </td>
                 </tr>
             </tbody>
         </table>
-
         <table cellpadding="0" cellspacing="0" border="1" class="no-top">
             <tbody>
                 <tr>
                     <td class="field endereco">
                         <span class="nf-label">ENDEREÇO</span>
-                        <span class="content-spacer info">[ds_transport_address]</span>
+                        <span class="content-spacer info">cep:70790-075
+                        </span>
                     </td>
                     <td style="width: 32mm">
                         <span class="nf-label">MUNICÍPIO</span>
-                        <span class="info">[ds_transport_city]</span>
+                        <span class="info">Brasília</span>
                     </td>
                     <td style="width: 31mm">
                         <span class="nf-label">UF</span>
-                        <span class="info">[ds_transport_uf]</span>
+                        <span class="info">DF</span>
                     </td>
                     <td style="width: 51.4mm">
                         <span class="nf-label">INSC. ESTADUAL</span>
-                        <span class="info">[ds_transport_ie]</span>
+                        <span class="info">123456789</span>
                     </td>
                 </tr>
             </tbody>
@@ -728,19 +729,19 @@ const htmlContent = `<!-- Header -->
                     </td>
                     <td style="width: 31mm">
                         <span class="nf-label">MARCA</span>
-                        <span class="info">[ds_transport_mark_volumes_transported]</span>
+                        <span class="info"></span>
                     </td>
                     <td style="width: 31.5mm">
                         <span class="nf-label">NUMERAÇÃO</span>
-                        <span class="info">[ds_transport_number_volumes_transported]</span>
+                        <span class="info"></span>
                     </td>
                     <td style="width: 31.5mm">
                         <span class="nf-label">PESO BRUTO</span>
-                        <span class="info">[vl_transport_gross_weight]</span>
+                        <span class="info">`+pesobruto +'kg'+`</span>
                     </td>
                     <td style="width: 32.5mm">
                         <span class="nf-label">PESO LÍQUIDO</span>
-                        <span class="info">[vl_transport_net_weight]</span>
+                    <span class="info">`+pesoliquido+'kg'+`</span>
                     </td>
                 </tr>
             </tbody>
@@ -768,7 +769,7 @@ const htmlContent = `<!-- Header -->
                     </tr>
                 </thead>
                 <tbody>
-                    [items]
+                    items:
                 </tbody>
             </table>
         </div>
@@ -780,19 +781,19 @@ const htmlContent = `<!-- Header -->
                 <tr>
                     <td class="field inscrMunicipal">
                         <span class="nf-label">INSCRIÇÃO MUNICIPAL</span>
-                        <span class="info txt-center">[ds_company_im]</span>
+                        <span class="info txt-center">123456789</span>
                     </td>
                     <td class="field valorTotal">
                         <span class="nf-label">VALOR TOTAL DOS SERVIÇOS</span>
-                        <span class="info txt-right">[vl_total_serv]</span>
+                        <span class="info txt-right">0,00</span>
                     </td>
                     <td class="field baseCalculo">
                         <span class="nf-label">BASE DE CÁLCULO DO ISSQN</span>
-                        <span class="info txt-right">[tot_bc_issqn]</span>
+                        <span class="info txt-right">0,00</span>
                     </td>
                     <td class="field valorIssqn">
                         <span class="nf-label">VALOR DO ISSQN</span>
-                        <span class="info txt-right">[tot_issqn]</span>
+                        <span class="info txt-right">0,00</span>
                     </td>
                 </tr>
             </tbody>
@@ -805,7 +806,9 @@ const htmlContent = `<!-- Header -->
                 <tr>
                     <td class="field infoComplementar">
                         <span class="nf-label">INFORMAÇÕES COMPLEMENTARES</span>
-                        <span>[ds_additional_information]</span>
+                        <span>Essa é uma nota fiscal eletronica SEM VALIDADE JURIDICA, feita apenas para demonstração do sistema em ambiente estudantil,
+                        apesar de seguir normas e regras gerais para a emissão de nota a mesma não possui validação do ISS.NET
+                        </span>
                     </td>
                     <td class="field reservaFisco" style="width: 85mm; height: 24mm">
                         <span class="nf-label">RESERVA AO FISCO</span>
@@ -819,7 +822,7 @@ const htmlContent = `<!-- Header -->
             <table cellpadding="0" cellspacing="0">
                 <tbody>
                     <tr>
-                        <td style="text-align: right"><strong>Empresa de Software www.empresa.com</strong></td>
+                        <td style="text-align: right"><strong>Empresa de Software www.demetertccbr.online</strong></td>
                     </tr>
                 </tbody>
             </table>
