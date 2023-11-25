@@ -361,7 +361,7 @@ const htmlContent = `<!-- Header -->
             <tbody>
                 <tr>
                     <td colspan="2" class="txt-upper">
-                        Recebemos de [ds_company_issuer_name] os produtos e serviços constantes na nota fiscal indicada ao lado
+                        Recebemos de DEMÉTER LTDA os produtos e serviços constantes na nota fiscal indicada ao lado
                     </td>
                     <td rowspan="2" class="tserie txt-center">
                         <span class="font-12" style="margin-bottom: 5px;">NF-e</span>
@@ -384,7 +384,7 @@ const htmlContent = `<!-- Header -->
             <tbody>
                 <tr>
                     <td rowspan="3" style="width: 30mm">
-                        <img class="client_logo" src="[url_logo]" alt="" onerror=" javascript:this.src='data:image/png;base64,'"/>
+                        <img class="client_logo" src="https://github.com/Robis123/Demeter/blob/nodeJS/template/tarja_nf_cancelada.png?raw=true" alt="" onerror=" javascript:this.src='data:image/png;base64,'"/>
                     </td>
                     <td rowspan="3" style="width: 46mm; font-size: 7pt;" class="txt-center">
                         <span class="mb2 bold block">[ds_company_issuer_name]</span>
@@ -465,15 +465,15 @@ const htmlContent = `<!-- Header -->
                 <tr>
                     <td>
                         <span class="nf-label">INSCRIÇÃO ESTADUAL</span>
-                        <span class="info">[nl_company_ie]</span>
+                        <span class="info">`+req.body.nl_company_ie+`</span>
                     </td>
                     <td style="width: 67.5mm;">
                         <span class="nf-label">INSCRIÇÃO ESTADUAL DO SUBST. TRIB.</span>
-                        <span class="info">[nl_company_ie_st]</span>
+                        <span class="info">`+req.body.nl_company_ie_st+`</span>
                     </td>
                     <td style="width: 64.3mm">
                         <span class="nf-label">CNPJ</span>
-                        <span class="info">[nl_company_cnpj_cpf]</span>
+                        <span class="info">`+req.body.nl_company_cnpj_cpf+`</span>
                     </td>
                 </tr>
             </tbody>
@@ -490,7 +490,7 @@ const htmlContent = `<!-- Header -->
                                 <tr>
                                     <td>
                                         <span class="nf-label">NOME/RAZÃO SOCIAL</span>
-                                        <span class="info">[ds_client_receiver_name]</span>
+                                        <span class="info">`+req.body.ds_client_receiver_name+`</span>
                                     </td>
                                     <td style="width: 40mm">
                                         <span class="nf-label">CNPJ/CPF</span>
@@ -502,7 +502,7 @@ const htmlContent = `<!-- Header -->
                     </td>
                     <td style="width: 22mm">
                         <span class="nf-label">DATA DE EMISSÃO</span>
-                        <span class="info">[dt_invoice_issue]</span>
+                        <span class="info">`+req.body.dt_invoice_issue+`</span>
                     </td>
                 </tr>
                 <tr>
@@ -512,15 +512,15 @@ const htmlContent = `<!-- Header -->
                                 <tr>
                                     <td>
                                         <span class="nf-label">ENDEREÇO</span>
-                                        <span class="info">[ds_client_address]</span>
+                                        <span class="info">`+req.body.ds_client_address+`</span>
                                     </td>
                                     <td style="width: 47mm;">
                                         <span class="nf-label">BAIRRO/DISTRITO</span>
-                                        <span class="info">[ds_client_neighborhood]</span>
+                                        <span class="info">`+req.body.ds_client_neighborhood+`</span>
                                     </td>
                                     <td style="width: 37.2 mm">
                                         <span class="nf-label">CEP</span>
-                                        <span class="info">[nu_client_cep]</span>
+                                        <span class="info">`+req.body.nu_client_cep+`</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -538,7 +538,7 @@ const htmlContent = `<!-- Header -->
                                 <tr>
                                     <td>
                                         <span class="nf-label">MUNICÍPIO</span>
-                                        <span class="info">[ds_client_city_name]</span>
+                                        <span class="info">`+req.body.ds_client_city_name+`</span>
                                     </td>
                                     <td style="width: 34mm">
                                         <span class="nf-label">FONE/FAX</span>
@@ -546,11 +546,11 @@ const htmlContent = `<!-- Header -->
                                     </td>
                                     <td style="width: 28mm">
                                         <span class="nf-label">UF</span>
-                                        <span class="info">[ds_client_uf]</span>
+                                        <span class="info">`+req.body.ds_client_uf+`</span>
                                     </td>
                                     <td style="width: 51mm">
                                         <span class="nf-label">INSCRIÇÃO ESTADUAL</span>
-                                        <span class="info">[ds_client_ie]</span>
+                                        <span class="info">`+req.body.ds_client_ie+`</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -717,11 +717,11 @@ const htmlContent = `<!-- Header -->
                 <tr>
                     <td class="field quantidade">
                         <span class="nf-label">QUANTIDADE</span>
-                        <span class="content-spacer info">[nu_transport_amount_transported_volumes]</span>
+                        <span class="content-spacer info">`+req.body.nu_transport_amount_transported_volumes+`</span>
                     </td>
                     <td style="width: 31.4mm">
                         <span class="nf-label">ESPÉCIE</span>
-                        <span class="info">[ds_transport_type_volumes_transported]</span>
+                        <span class="info">`+req.body.ds_transport_type_volumes_transported+`</span>
                     </td>
                     <td style="width: 31mm">
                         <span class="nf-label">MARCA</span>
