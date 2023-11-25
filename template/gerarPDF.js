@@ -10,8 +10,19 @@ function gerarPDF(htmlString, outputPath) {
   });
 }
 
+function getRandomHash() {
+    let randomHash = "";
+    const randomNumbers = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10));
+    randomHash = randomNumbers.join("");
+    return randomHash;
+}
+
+
+
 function htmlPDF(req){
 // Exemplo de uso:
+serie = getRandomHash()
+vl_total = req.body.vl_total
 const htmlContent = `<!-- Header -->
 
 <style type="text/css">
@@ -353,12 +364,12 @@ const htmlContent = `<!-- Header -->
             <tbody>
                 <tr>
                     <td colspan="2" class="txt-upper">
-                        Recebemos de DEMÉTER LTDA os produtos e serviços constantes na nota fiscal indicada ao lado
+                        Recebemos de Démeter LTDA os produtos e serviços constantes na nota fiscal indicada ao lado
                     </td>
                     <td rowspan="2" class="tserie txt-center">
                         <span class="font-12" style="margin-bottom: 5px;">NF-e</span>
-                        <span>Nº [nl_invoice]</span>
-                        <span>Série [ds_invoice_serie]</span>
+                        <span>Nº `+serie+`</span>
+                        <span>Série 1</span>
                     </td>
                 </tr>
                 <tr>
@@ -379,13 +390,13 @@ const htmlContent = `<!-- Header -->
                         <img class="client_logo" src="https://github.com/Robis123/Demeter/blob/nodeJS/template/icon2.png?raw=true" alt="" onerror=" javascript:this.src='data:image/png;base64,'"/>
                     </td>
                     <td rowspan="3" style="width: 46mm; font-size: 7pt;" class="txt-center">
-                        <span class="mb2 bold block">[ds_company_issuer_name]</span>
-                        <span class="block">[ds_company_address]</span>
+                        <span class="mb2 bold block">Deméter</span>
+                        <span class="block">SEPN 707/907</span>
                         <span class="block">
-                            [ds_company_neighborhood] - [nu_company_cep]
+                        Asa norte - cep:70790-075
                         </span>
                         <span class="block">
-                            [ds_company_city_name] - [ds_company_uf]- Fone: [nl_company_phone_number]
+                            Brasília - DF- Fone: (61) 3966-1201
                         </span>
                     </td>
                     <td rowspan="3" class="txtc txt-upper" style="width: 34mm; height: 29.5mm;">
@@ -393,7 +404,7 @@ const htmlContent = `<!-- Header -->
                         <p class="mb2">Documento auxiliar da Nota Fiscal Eletrônica </p>
                         <p class="entradaSaida mb2">
                             <span class="identificacao">
-                                <span>[ds_code_operation_type]</span>
+                                <span>1</span>
                             </span>
                             <span class="legenda">
                                 <span>0 - Entrada</span>
@@ -403,17 +414,17 @@ const htmlContent = `<!-- Header -->
                         <p>
                             <span class="block bold">
                                 <span>Nº</span>
-                                <span>[nl_invoice]</span>
+                                <span>`+serie+`</span>
                             </span>
                             <span class="block bold">
                                 <span>SÉRIE:</span>
-                                <span>[ds_invoice_serie]</span>
+                                <span>1</span>
                             </span>
                             <span class="block">
                                 <span>Página</span>
-                                <span>[actual_page]</span>
+                                <span>1</span>
                                 <span>de</span>
-                                <span>[total_pages]</span>
+                                <span>1</span>
                             </span>
                         </p>
                     </td>
@@ -441,11 +452,11 @@ const htmlContent = `<!-- Header -->
                 <tr>
                     <td>
                         <span class="nf-label">NATUREZA DA OPERAÇÃO</span>
-                        <span class="info">[_ds_transaction_nature]</span>
+                        <span class="info">Venda</span>
                     </td>
                     <td style="width: 84.7mm;">
-                        <span class="nf-label">[protocol_label]</span>
-                        <span class="info">[ds_protocol]</span>
+                        <span class="nf-label">protocolo de homologação</span>
+                        <span class="info">12345678901234567890</span>
                     </td>
                 </tr>
             </tbody>
@@ -557,8 +568,8 @@ const htmlContent = `<!-- Header -->
         </table>
         <!-- Fatura -->
         <div class="boxFatura">
-            <p class="area-name">Fatura</p>
-            [duplicates]
+            <p class="area-name"></p>
+            FATURA
         </div>
 
         <!-- Calculo do Imposto -->
@@ -569,19 +580,19 @@ const htmlContent = `<!-- Header -->
                     <tr>
                         <td>
                             <span class="nf-label label-small">BASE DE CÁLC. DO ICMS</span>
-                            <span class="info">[tot_bc_icms]</span>
+                            <span class="info">`+vl_total+`</span>
                         </td>
                         <td>
                             <span class="nf-label">VALOR DO ICMS</span>
-                            <span class="info">[tot_icms]</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label label-small" style="font-size: 4pt;">BASE DE CÁLC. DO ICMS ST</span>
-                            <span class="info">[tot_bc_icms_st]</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label">VALOR DO ICMS ST</span>
-                            <span class="info">[tot_icms_st]</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label label-small">V. IMP. IMPORTAÇÃO</span>
@@ -593,7 +604,7 @@ const htmlContent = `<!-- Header -->
                         </td>
                         <td>
                             <span class="nf-label">VALOR DO FCP</span>
-                            <span class="info">[tot_icms_fcp]</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label">VALOR DO PIS</span>
@@ -601,29 +612,29 @@ const htmlContent = `<!-- Header -->
                         </td>
                         <td>
                             <span class="nf-label label-small">V. TOTAL DE PRODUTOS</span>
-                            <span class="info">[vl_total_prod]</span>
+                            <span class="info"> `+vl_total+`</span>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <span class="nf-label">VALOR DO FRETE</span>
-                            <span class="info">[vl_shipping]</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label">VALOR DO SEGURO</span>
-                            <span class="info">[vl_insurance]</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label">DESCONTO</span>
-                            <span class="info">[vl_discount]</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label">OUTRAS DESP.</span>
-                            <span class="info">[vl_other_expense]</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label">VALOR DO IPI</span>
-                            <span class="info">[tot_total_ipi_tax]</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label">V. ICMS UF DEST.</span>
@@ -631,7 +642,7 @@ const htmlContent = `<!-- Header -->
                         </td>
                         <td>
                             <span class="nf-label label-small">V. APROX. DO TRIBUTO</span>
-                            <span class="info">{ApproximateTax}</span>
+                            <span class="info">0,00</span>
                         </td>
                         <td>
                             <span class="nf-label label-small">VALOR DA CONFINS</span>
@@ -639,7 +650,7 @@ const htmlContent = `<!-- Header -->
                         </td>
                         <td>
                             <span class="nf-label label-small">V. TOTAL DA NOTA</span>
-                            <span class="info">[vl_total]</span>
+                            <span class="info">`+vl_total+`</span>
                         </td>
                     </tr>
                 </tbody>
