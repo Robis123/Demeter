@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./login";
 import Cadastro from "./cadastro";
 import Tabs from "./tabs";
+import TabsVarejista from './tabsVarejista';
 
 const Tab = createNativeStackNavigator();
 
@@ -26,7 +27,12 @@ export default function Rotas() {
           name="Tabs"
           component={Tabs}
           options={{ headerShown: false }}
-        />
+        /> 
+        {/* <Tab.Screen
+          name="TabsVarejista"
+          component={TabsVarejista}
+          options={{ headerShown: false }}
+        /> */}
       </Tab.Navigator>
     </NavigationContainer>
   );

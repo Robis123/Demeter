@@ -1,118 +1,166 @@
-import { Box, Radio, ScrollView } from "native-base";
-import { Titulo } from "./components/titulo";
-import { EntradaTexto } from "./components/entradaTexto";
-import { Botao } from "./components/botao";
-import { useEffect, useState } from "react";
-import { secoes } from "./utils/cadastroEntradaTexto";
-import UserContext from "./context/userContext";
-import React from "react";
-import { useForm } from "react-hook-form";
 import { Button, TextInput } from "react-native-paper";
 import { KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
-import { StyleSheet, View, Image, Text } from "react-native";
-import { app, db, getFirestore, collection, addDoc } from "./firebase/firebase.js"
-import { useContext } from 'react';
-
+import { StyleSheet, View, Text, ScrollView } from "react-native";
+import React, { useEffect, useState, useContext } from "react";
+import { useForm } from "react-hook-form";
+import { addDoc, collection, db } from "./firebase/firebase.js";
+import { AuthContext } from './context/authContext';
 
 export default function Cadastro({ navigation }) {
-  const user = React.useContext(UserContext);
-  const [numSecao, setNumSecao] = useState(0);
-  const [selectedValue, setSelectedValue] = useState(null); // Adicione esta linha
-
-
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
   const [cnpj, setCnpj] = useState("");
   const [telefone, setTelefone] = useState("");
   const [email, setEmail] = useState("");
+  const [inscricaoEstadual, setInscricaoEstadual] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [bairroDistrito, setBairroDistrito] = useState("");
+  const [cep, setCep] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [uf, setUf] = useState("");
+  const { signOut } = useContext(AuthContext);
 
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit } = useForm();
 
-  React.useEffect(() => {
+  useEffect(() => {
     register("nome");
     register("cpfCnpj");
     register("telefone");
     register("email");
+    register("inscricaoEstadual");
+    register("endereco");
+    register("bairroDistrito");
+    register("cep");
+    register("cidade");
+    register("uf");
   }, [register]);
 
-
-  // Essa função aqui que vai adicionar os elementos em uma coleção do banco de dados, no caso dessa, produtores
   const addProdutor = async () => {
-
     try {
       const docRef = await addDoc(collection(db, "produtores"), {
-        nome: nome,
-        cpf: cpf,
-        cnpj: cnpj,
-        telefone: telefone,
-        email: email
+        nome,
+        cpf,
+        cnpj,
+        telefone,
+        email,
+        inscricaoEstadual,
+        endereco,
+        bairroDistrito,
+        cep,
+        cidade,
+        uf
       });
 
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-  }
+  };
 
   return (
     <KeyboardAvoidingView
-    style={styles.container}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
-    enabled
-    keyboardVerticalOffset={-254}
-  >
-    <View style={[styles.container, styles.innerContainer]}>
-      <Text style={styles.text}>Cadastro de dados</Text>
-      <TextInput
-        style={styles.input}
-        label="Nome"
-        value={nome}
-        onSubmitEditing={addProdutor}
-        onChangeText={(text) => {
-          // Limita o texto a 50 caracteres
-          if (text.length <= 50) {
-            setNome(text);
-          }
-        }}
-        maxLength={50} // Define o limite de caracteres
-      />
-      <TextInput
-        style={styles.input}
-        label="CPF/CNPJ"
-      // Não coloquei aqui pq tem q resolver ainda se vai ser cpf e cnpj e um campo só (usando máscaras), 
-      // ou separados
-      />
-      <TextInput
-        style={styles.input}
-        label="Numero"
-        value={formatPhoneNumber(telefone)}
-        onSubmitEditing={addProdutor}
-        onChangeText={(text) => setTelefone(text)}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={styles.input}
-        label="Email"
-        value={email}
-        onSubmitEditing={addProdutor}
-        onChangeText={(text) => setEmail(text)}
-      />
-      <Button
-        style={styles.button}
-        mode="contained"
-        onPress={() => {
-          addProdutor();
-          navigation.navigate("Tabs");
-        }}
-      >
-        Cadastrar
-      </Button>
-      <Button style={styles.button}>
-        Sign Out
-      </Button>
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      enabled
+      keyboardVerticalOffset={-254}
+    >
+      <View style={styles.scrollViewContainer}>
+        <Text style={styles.text}>Cadastro de dados</Text>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode='on-drag'
+        >
+          <View style={styles.innerContainer}>
+          <TextInput
+            style={styles.input}
+            label="Nome"
+            value={nome}
+            onSubmitEditing={addProdutor}
+            onChangeText={(text) => {
+              // Limita o texto a 50 caracteres
+              if (text.length <= 50) {
+                setNome(text);
+              }
+            }}
+            maxLength={50}
+          />
+          <TextInput
+            style={styles.input}
+            label="CPF/CNPJ"
+            value={cpf}
+            onChangeText={(text) => setCpf(text)}
+          />
+          <TextInput
+            style={styles.input}
+            label="Numero"
+            value={formatPhoneNumber(telefone)}
+            onSubmitEditing={addProdutor}
+            onChangeText={(text) => setTelefone(text)}
+            keyboardType="numeric"
+          />
+          <TextInput
+            style={styles.input}
+            label="Email"
+            value={email}
+            onSubmitEditing={addProdutor}
+            onChangeText={(text) => setEmail(text)}
+          />
+          <TextInput
+            style={styles.input}
+            label="Inscrição Estadual"
+            value={inscricaoEstadual}
+            onChangeText={(text) => setInscricaoEstadual(text)}
+          />
+          <TextInput
+            style={styles.input}
+            label="Endereço"
+            value={endereco}
+            onChangeText={(text) => setEndereco(text)}
+          />
+          <TextInput
+            style={styles.input}
+            label="Bairro ou Distrito"
+            value={bairroDistrito}
+            onChangeText={(text) => setBairroDistrito(text)}
+          />
+          <TextInput
+            style={styles.input}
+            label="CEP"
+            value={cep}
+            onChangeText={(text) => setCep(text)}
+          />
+          <TextInput
+            style={styles.input}
+            label="Cidade"
+            value={cidade}
+            onChangeText={(text) => setCidade(text)}
+          />
+          <TextInput
+            style={styles.input}
+            label="UF"
+            value={uf}
+            onChangeText={(text) => setUf(text)}
+          />
+          <Button
+            style={styles.button}
+            mode="contained"
+            onPress={() => {
+              addProdutor();
+              navigation.navigate("Tabs");
+            }}
+          >
+            Cadastrar
+          </Button>
+          <Button style={styles.button} onPress={signOut}>
+            Sign Out
+          </Button>
+        </View>
+      </ScrollView>
     </View>
   </KeyboardAvoidingView>
-  );
+);
 }
 function keyboard() {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -149,28 +197,27 @@ function formatPhoneNumber(value) {
   return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}-${phoneNumber.slice(7, 11)}`;
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+  },
+  scrollViewContainer: {
+    flex: 1,
+    width: '100%',
   },
   innerContainer: {
-    top: 140,
-    width: '100%', // Ocupa toda a largura do dispositivo
-    paddingHorizontal: 5, // Adiciona um espaçamento nas laterais
+    width: '100%',
+    paddingHorizontal: 16,
     alignItems: 'center',
   },
-  image: {
-    marginBottom: 20,
-    borderRadius: 100,
-  },
   text: {
-    marginBottom: 100,
-    fontSize: 18,
+    marginTop: 20,
+    marginBottom: 20,
+    fontSize: 25,
     fontWeight: "bold",
+    textAlign: 'center', // Adicione esta linha
   },
   input: {
     width: "100%",
@@ -179,6 +226,18 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 65,
-    marginBottom: 250,
+    marginBottom: 20,
+    padding:10,
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
+
+

@@ -1,33 +1,31 @@
-import { Avatar, Box, Radio, ScrollView, HStack, Button, Image, VStack, Input, Flex, View} from "native-base";
+import { Box, ScrollView, HStack, Button, Image, VStack, Input } from "native-base";
 import { Titulo } from "../components/titulo";
 import { Botao } from "../components/botao";
-import React from "react";
-import { useState } from "react";
-import { secoes } from '../utils/nfsSecoes'
-import Image1 from "../assets/image1.png";
-import Image2 from "../assets/image2.png";
-import Image3 from "../assets/image3.png";
-import Image4 from "../assets/image4.png";
-import Image5 from "../assets/image5.png";
-import Image6 from "../assets/image6.png";
+import React, { useState } from "react";
+import { secoes } from '../utils/nfsSecoes';
+
 export default function Nfs() {
   const [numSecao, setNumSecao] = useState(0);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
-  const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+  const [produtosSelecionados, setProdutosSelecionados] = useState([]);
+  const [quantidadeAtual, setQuantidadeAtual] = useState(0);
+
   function avancarSecao() {
     if (numSecao < secoes.length - 1) {
       setNumSecao(numSecao + 1);
     }
   }
+
   function voltarSecao() {
     if (numSecao > 0) {
       setNumSecao(numSecao - 1);
     }
   }
+
   return (
     <VStack flex={1}>
-      <Box flex={1}>
-        {numSecao == 0 && <VStack alignItems='center'>
+      {numSecao === 0 && (
+        <VStack alignItems='center'>
           <Titulo px={5} w='100%' color="black" fontSize='3xl'>Quais produtos gostaria de emitir na NFEs ?</Titulo>
           <Titulo mt={0} px={5} w='80%' fontSize='md'>Informe a quantidade e adicione</Titulo>
           <Input
@@ -40,89 +38,136 @@ export default function Nfs() {
             shadow={3}
           />
           <Titulo px={5} w='100%' color="black" fontSize='xl'>Categorias</Titulo>
-          <>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <HStack my={2}>
-              {secoes[numSecao]?.entradaCategoria?.map((entrada) => {
+        </VStack>
+      )}
+      {numSecao === 0 && (
+        <ScrollView>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <HStack my={2}>
+              {secoes[numSecao]?.entradaCategoria?.map((entrada) => (
+                <VStack px={2} key={entrada.categoria}>
+                  <Button
+                    p={0}
+                    borderRadius={100}
+                    onPress={() => setCategoriaSelecionada(entrada.categoria)}
+                    bgColor={categoriaSelecionada === entrada.categoria ? "blue.400" : "gray.200"}
+                  >
+                    <Image source={entrada.image} alt="Alternate Text" size="md" />
+                  </Button>
+                  <Titulo fontSize='md' mt={0}>{entrada.categoria}</Titulo>
+                </VStack>
+              ))}
+            </HStack>
+          </ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {secoes[numSecao]?.entradaProdutos
+              ?.filter((produto) => !categoriaSelecionada || produto.categoria === categoriaSelecionada)
+              .map((entrada) => {
+                return entrada.tiposProdutos.map((tipoProduto) => {
                   return (
-                    <VStack px={2}>
-                      <Button p={0} borderRadius={100} onPress={() => {setCategoriaSelecionada(entrada.categoria);}} bgColor="blue.400">
-                        <Image source={entrada.image} alt="Alternate Text" size="md" />
-                      </Button>
-                      <Titulo fontSize='md' mt={0}>{entrada.categoria}</Titulo>
-                    </VStack>
-                  );  
-                })} 
-              </HStack>
-            </ScrollView>
-          </>
-        </VStack>}
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {secoes[numSecao]?.entradaProdutos?.filter(produto => produto.categoria === categoriaSelecionada).map((entrada) => {
-            return entrada.tiposProdutos.map((tipoProduto) => {
-              return (
-                <HStack>
-                  <Image m={3} size='lg' source={tipoProduto.image} alt="testeimage" />
-                  <VStack alignItems='flex-start'>
-                    <Titulo fontSize='lg' mt={0}>{tipoProduto.produto}</Titulo>
-                    <VStack justifyContent='center' alignItems='center'>
-                      <HStack mt={5} alignItems='center' justifyContent='center'>
-                        <Botao mt={0} bg='gray.200' w='10%' h='100%' _text={{ color: "black" }} m={2} >+</Botao>
-                        <Input  w='50%' h='110%' placeholder="Quantidade..." bgColor="gray.200" fontSize="lg"/>
-                        <Botao mt={0} bg='gray.200' w='10%' h='100%' _text={{ color: "black" }} m={2}>-</Botao>
-                      </HStack>
-                    </VStack>
-                    <Button mt={2} w='75%'>Adicionar</Button>
-                  </VStack>
-                </HStack>
-              )
-            })
-          })}
-          <VStack alignItems='center'>
-            {numSecao == 0 && (
-              <Botao mr={8} mb={5} bg='green.500' _text={{ fontSize: '2xl'}}  w='60%' onPress={avancarSecao}>
+                    <HStack key={tipoProduto.produto}>
+                      <Image m={3} size='lg' source={tipoProduto.image} alt="testeimage" />
+                      <VStack alignItems='flex-start'>
+                        <Titulo fontSize='lg' mt={0}>{tipoProduto.produto}</Titulo>
+                        <VStack justifyContent='center' alignItems='center'>
+                          <HStack mt={5} alignItems='center' justifyContent='center'>
+                            <Botao mt={0} bg='gray.200' w='10%' h='100%' _text={{ color: "black" }} m={2} >+</Botao>
+                            <Input
+                              w='50%'
+                              h='110%'
+                              placeholder="Quantidade..."
+                              bgColor="gray.200"
+                              fontSize="lg"
+                              onChange={(event) => setQuantidadeAtual(parseInt(event.nativeEvent.text, 10))}
+                            />
+                            <Botao mt={0} bg='gray.200' w='10%' h='100%' _text={{ color: "black" }} m={2}>-</Botao>
+                          </HStack>
+                        </VStack>
+                        <Button
+                          mt={2}
+                          w='75%'
+                          onPress={() => {
+                            const produto = { nome: tipoProduto.produto, quantidade: quantidadeAtual, categoria: categoriaSelecionada };
+                            setProdutosSelecionados([...produtosSelecionados, produto]);
+                          }}
+                        >
+                          Adicionar
+                        </Button>
+                      </VStack>
+                    </HStack>
+                  );
+                });
+              })}
+            <VStack alignItems='center'>
+              <Botao
+                mr={8}
+                mb={5}
+                bg='green.500'
+                _text={{ fontSize: '2xl' }}
+                w='60%'
+                onPress={avancarSecao}
+              >
                 Continuar
               </Botao>
-            )}
-          </VStack>
+            </VStack>
+          </ScrollView>
         </ScrollView>
-      </Box>
+      )}
+      {numSecao === 1 && (
+        <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {produtosSelecionados.map((produto, index) => {
+              const tipoProduto = secoes[numSecao]?.entradaProdutos
+                ?.find((categoria) => categoria.categoria === produto.categoria)
+                ?.tiposProdutos.find((tipo) => tipo.produto === produto.nome);
 
-      {numSecao == 1 && <VStack flex={1} alignItems='center' m={5}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-            {secoes[numSecao]?.entradaProdutos?.filter(produto => produto.categoria === categoriaSelecionada).map((entrada) => {
-              return entrada.tiposProdutos.map((tipoProduto) => {
-                return (
-                  <HStack>
-                    <Image m={3} size='lg' source={tipoProduto.image} alt="testeimage" />
-                    <VStack alignItems='flex-start'>
-                      <Titulo fontSize='lg' mt={0}>{tipoProduto.produto}</Titulo>
-                      <Titulo mt={2} w='100%'>Quantidade</Titulo>
-                    </VStack>
-                  </HStack>
-                )
-              })
+              return (
+                <HStack key={index}>
+                  <Image m={3} size='lg' source={tipoProduto?.image} alt="testeimage" />
+                  <VStack alignItems='flex-start'>
+                    <Titulo fontSize='lg' mt={0}>{produto.nome}</Titulo>
+                    <Titulo mt={2} w='100%'>Quantidade: {produto.quantidade}</Titulo>
+                  </VStack>
+                </HStack>
+              );
             })}
             <VStack alignItems='center'>
-                <Botao mr={8} mb={5} bg='green.500' _text={{ fontSize: '2xl'}}  w='60%' onPress={avancarSecao}>
-                  Emitir Nota Fiscal
-                </Botao>
+              <Botao
+                mr={8}
+                mb={5}
+                bg='green.500'
+                _text={{ fontSize: '2xl' }}
+                w='60%'
+                onPress={avancarSecao}
+              >
+                Emitir Nota Fiscal
+              </Botao>
             </VStack>
+          </ScrollView>
         </ScrollView>
-
-      </VStack>}
-
-
-
-
-
-
-
-      {numSecao > 0 && numSecao < 3 && (
-            <Botao onPress={() => voltarSecao()} bgColor="gray.400">
-              Voltar
-            </Botao>
       )}
+      <Box mt={5} alignItems="center" p={5} justifyContent="center">
+        {numSecao > 0 && numSecao < 2 && (
+          <Botao onPress={() => voltarSecao()} bgColor="gray.400">
+            Voltar
+          </Botao>
+        )}
+        {numSecao >= 2 && (
+          <Botao
+            bg='green.500'
+            _text={{ fontSize: '3xl' }}
+            p={5}
+            w='70%'
+            onPress={() => {
+              setNumSecao(0); // Redefine para a primeira seção
+              setProdutosSelecionados([]); // Reseta os produtos selecionados
+            }}
+          >
+            Salvar
+          </Botao>
+        )}
+
+      </Box>
     </VStack>
   );
 }
