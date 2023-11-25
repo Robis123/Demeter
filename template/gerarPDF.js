@@ -20,10 +20,6 @@ const htmlContent = `<!-- Header -->
             margin-left: 15mm;
             margin-right: 15mm;
         }
-
-        footer {
-            page-break-after: always;
-        }
     }
 
     * {
@@ -336,10 +332,6 @@ const htmlContent = `<!-- Header -->
         display: block;
     }
 
-    .nfeArea .page-break {
-        page-break-before: always;
-    }
-
     .nfeArea .block {
         display: block;
     }
@@ -384,7 +376,7 @@ const htmlContent = `<!-- Header -->
             <tbody>
                 <tr>
                     <td rowspan="3" style="width: 30mm">
-                        <img class="client_logo" src="https://github.com/Robis123/Demeter/blob/nodeJS/template/tarja_nf_cancelada.png?raw=true" alt="" onerror=" javascript:this.src='data:image/png;base64,'"/>
+                        <img class="client_logo" src="https://github.com/Robis123/Demeter/blob/nodeJS/template/icon2.png?raw=true" alt="" onerror=" javascript:this.src='data:image/png;base64,'"/>
                     </td>
                     <td rowspan="3" style="width: 46mm; font-size: 7pt;" class="txt-center">
                         <span class="mb2 bold block">[ds_company_issuer_name]</span>
@@ -528,7 +520,7 @@ const htmlContent = `<!-- Header -->
                     </td>
                     <td>
                         <span class="nf-label">DATA DE ENTR./SAÍDA</span>
-                        <span class="info">[dt_input_output]</span>
+                        <span class="info">`+req.body.dt_invoice_issue+`</span>
                     </td>
                 </tr>
                 <tr>
@@ -542,7 +534,7 @@ const htmlContent = `<!-- Header -->
                                     </td>
                                     <td style="width: 34mm">
                                         <span class="nf-label">FONE/FAX</span>
-                                        <span class="info">[nl_client_phone_number]</span>
+                                        <span class="info">`+req.body.nl_client_phone_number+`</span>
                                     </td>
                                     <td style="width: 28mm">
                                         <span class="nf-label">UF</span>
@@ -822,7 +814,6 @@ const htmlContent = `<!-- Header -->
             </table>
         </footer>
     </div>
-    [page-break]
 </div>
 `;
 const outputPath = 'qualquer.pdf';
