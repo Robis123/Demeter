@@ -2,7 +2,7 @@ const { initializeApp } = require("firebase/app");
 const { getStorage, ref, uploadBytes  } = require("firebase/storage");
 
 
-function firebasePost(file,req){
+function firebasePost(file,req,res){
 
 const firebaseConfig = {
   apiKey: "AIzaSyBuTz51FrhMgRnQqQ-XK94vBqB9jgtXVTY",
@@ -27,14 +27,14 @@ const gandra = variavel+'/'+file
 console.log(pdf)
 // 'file' comes from the Blob or File API
 // You need to replace 'path/to/local/file.pdf' with the actual path to your local file
-const localFile = new Uint8Array([/* your file data here */]);
+const localFile = new Uint8Array([]);
 
 uploadBytes(pdf, localFile).then((snapshot) => {
   console.log('Uploaded a blob or file!');
 }).catch((error) => {
   console.error('Error uploading file:', error);
 });
-module.exports = { gandra };
+
 }
 
 module.exports = { firebasePost };

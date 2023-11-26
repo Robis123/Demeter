@@ -12,7 +12,8 @@ route.post('/teste', upload.none(), async (req, res) => {
     // req.body agora contém os dados do formulário
     // const requisição = req.body;
     // console.log(nome);
-    htmlPDF(req).then(res.send(gandra))
+    htmlPDF(req)
+    res.send(gandra)
     console.log('cheguei aqui...')
     console.log('---------->'+gandra)
 });

@@ -2,26 +2,14 @@ const fs = require('fs');
 const pdf = require('html-pdf');
 const { firebasePost } = require('../teste.js');
 
-function gerarPDF(htmlString, outputPath,req) {
+function gerarPDF(htmlString, outputPath,req,res) {
   const options = { format: 'Letter' };
 
-  pdf.create(htmlString, options).toFile(outputPath, (err, res) => {
+  pdf.create(htmlString, options).toFile(outputPath, (err, resposta) => {
     if (err) return console.log(err);
-    console.log(`PDF gerado em: ${res.filename}`);
-    firebasePost(outputPath,req)
-
-
-    try {
-        fs.unlinkSync(res.filename);
-        console.log(`O arquivo ${res.filename} foi excluído com sucesso.`);
-    } catch (err) {
-        if (err.code === 'ENOENT') {
-            console.log(`O arquivo ${res.filename} não foi encontrado.`);
-        } else {
-            console.error(`Ocorreu um erro ao excluir o arquivo: ${err.message}`);
-        }
-    }
+    console.log(`PDF gerado em: ${resposta.filename}`);
   });
+  firebasePost(outputPath,req,res)
 }
 
 function getRandomHash() {
@@ -33,7 +21,7 @@ function getRandomHash() {
 
 
 
-function htmlPDF(req){
+function htmlPDF(req,res){
 // Exemplo de uso:
 serie = getRandomHash()
 vl_total = req.body.vl_total
@@ -846,5 +834,5 @@ const htmlContent = `<!-- Header -->
 `;
 const outputPath = getRandomHash()+'.pdf';
 
-gerarPDF(htmlContent, outputPath,req);}
+gerarPDF(htmlContent, outputPath,req,res);}
 module.exports = { htmlPDF };
