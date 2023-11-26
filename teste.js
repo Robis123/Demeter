@@ -20,8 +20,10 @@ const app = initializeApp(firebaseConfig);
 // Initialize Cloud Storage and get a reference to the service
 const storage = getStorage(app);
 
+variavel = req.body.nl_company_cnpj_cpf.replace(/\//g, '')
 // Create a reference to 'images/mountains.jpg'
-const pdf = ref(storage, req.body.nl_company_cnpj_cpf+'/'+file);
+const pdf = ref(storage, variavel+'/'+file);
+const gandra = variavel+'/'+file
 console.log(pdf)
 // 'file' comes from the Blob or File API
 // You need to replace 'path/to/local/file.pdf' with the actual path to your local file
@@ -32,6 +34,7 @@ uploadBytes(pdf, localFile).then((snapshot) => {
 }).catch((error) => {
   console.error('Error uploading file:', error);
 });
+module.exports = { gandra };
 }
 
 module.exports = { firebasePost };

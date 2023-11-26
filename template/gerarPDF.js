@@ -8,7 +8,19 @@ function gerarPDF(htmlString, outputPath,req) {
   pdf.create(htmlString, options).toFile(outputPath, (err, res) => {
     if (err) return console.log(err);
     console.log(`PDF gerado em: ${res.filename}`);
-    firebasePost(res.filename,req)
+    firebasePost(outputPath,req)
+
+
+    try {
+        fs.unlinkSync(res.filename);
+        console.log(`O arquivo ${res.filename} foi excluído com sucesso.`);
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            console.log(`O arquivo ${res.filename} não foi encontrado.`);
+        } else {
+            console.error(`Ocorreu um erro ao excluir o arquivo: ${err.message}`);
+        }
+    }
   });
 }
 
