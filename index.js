@@ -27,7 +27,6 @@ app.use((req, res, next) => {
     next();
 });
 app.use('/',routes);
-console.log(routes)
 
 /**
  * Lida com erro 404: Recurso não encontrado
@@ -51,4 +50,4 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(3000, () => { console.log("Servidor escutando na porta 3000") });
+app.listen(3000, '0.0.0.0', () => { console.log("Servidor escutando na porta 3000") });

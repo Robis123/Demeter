@@ -401,7 +401,7 @@ const htmlContent = `<!-- Header -->
             <tbody>
                 <tr>
                     <td rowspan="3" style="width: 30mm">
-                        <img class="client_logo" src="https://github.com/Robis123/Demeter/blob/nodeJS/template/icon2.png?raw=true" alt="" onerror=" javascript:this.src='data:image/png;base64,'"/>
+                        <img class="client_logo" src="https://github.com/Robis123/Demeter/blob/nodeJS/template/icon3.png?raw=true" alt="" onerror=" javascript:this.src='data:image/png;base64,'"/>
                     </td>
                     <td rowspan="3" style="width: 46mm; font-size: 7pt;" class="txt-center">
                         <span class="mb2 bold block">Deméter</span>
