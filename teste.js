@@ -1,8 +1,9 @@
 const { initializeApp } = require("firebase/app");
 const { getStorage, ref, uploadBytes  } = require("firebase/storage");
+const fs = require('fs');
+const pathTotal = require('./template/gerarPDF');
 
-
-function firebasePost(file,req,res){
+function firebasePost(file,req,res,resposta){
 
 const firebaseConfig = {
   apiKey: "AIzaSyBuTz51FrhMgRnQqQ-XK94vBqB9jgtXVTY",
@@ -24,17 +25,24 @@ variavel = req.body.nl_company_cnpj_cpf.replace(/\//g, '')
 // Create a reference to 'images/mountains.jpg'
 const pdf = ref(storage, variavel+'/'+file);
 const gandra = variavel+'/'+file
-console.log(pdf)
+
+//const filePath = 'C:/Users/Diogo Bites/Desktop/TCC-MAIN/Demeter/870031.pdf';  // Substitua pelo caminho real do seu arquivo
+console.log(resposta.filename+ '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+const fileContent = fs.readFileSync(resposta.filename);
+
+// Criar um Uint8Array a partir do conteúdo do arquivo
+const localFile = new Uint8Array(fileContent);
+
 // 'file' comes from the Blob or File API
 // You need to replace 'path/to/local/file.pdf' with the actual path to your local file
-const localFile = new Uint8Array([]);
 
 uploadBytes(pdf, localFile).then((snapshot) => {
   console.log('Uploaded a blob or file!');
+  res.send(gandra)
 }).catch((error) => {
   console.error('Error uploading file:', error);
+  res.send('erro na linha 43 teste.js :D')
 });
-
 }
 
 module.exports = { firebasePost };

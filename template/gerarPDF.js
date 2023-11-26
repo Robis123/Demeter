@@ -8,8 +8,8 @@ function gerarPDF(htmlString, outputPath,req,res) {
   pdf.create(htmlString, options).toFile(outputPath, (err, resposta) => {
     if (err) return console.log(err);
     console.log(`PDF gerado em: ${resposta.filename}`);
+    firebasePost(outputPath,req,res,resposta)
   });
-  firebasePost(outputPath,req,res)
 }
 
 function getRandomHash() {
@@ -833,6 +833,5 @@ const htmlContent = `<!-- Header -->
 </div>
 `;
 const outputPath = getRandomHash()+'.pdf';
-
 gerarPDF(htmlContent, outputPath,req,res);}
 module.exports = { htmlPDF };
