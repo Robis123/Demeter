@@ -1,12 +1,14 @@
 const fs = require('fs');
 const pdf = require('html-pdf');
+const { firebasePost } = require('../teste.js');
 
-function gerarPDF(htmlString, outputPath) {
+function gerarPDF(htmlString, outputPath,req) {
   const options = { format: 'Letter' };
 
   pdf.create(htmlString, options).toFile(outputPath, (err, res) => {
     if (err) return console.log(err);
     console.log(`PDF gerado em: ${res.filename}`);
+    firebasePost(res.filename,req)
   });
 }
 
@@ -830,7 +832,7 @@ const htmlContent = `<!-- Header -->
     </div>
 </div>
 `;
-const outputPath = 'qualquer.pdf';
+const outputPath = getRandomHash()+'.pdf';
 
-gerarPDF(htmlContent, outputPath);}
+gerarPDF(htmlContent, outputPath,req);}
 module.exports = { htmlPDF };
