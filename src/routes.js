@@ -15,7 +15,7 @@ route.post('/teste', upload.none(), async (req, res) => {
     htmlPDF(req,res)
     //res.send(gandra)
     console.log('cheguei aqui...')
-    console.log('---------->'+gandra)
+    console.log('----------> '+gandra)
 });
 
 module.exports = route;
