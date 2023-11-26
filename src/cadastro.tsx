@@ -5,6 +5,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { addDoc, collection, db } from "./firebase/firebase.js";
 import { AuthContext } from './context/authContext';
+import { TextInputMask } from 'react-native-masked-text';
 
 export default function Cadastro({ navigation }) {
   const [nome, setNome] = useState("");
@@ -18,6 +19,7 @@ export default function Cadastro({ navigation }) {
   const [cep, setCep] = useState("");
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
+  const [international, setInternational] = useState("");
   const { signOut } = useContext(AuthContext);
 
   const { register, handleSubmit } = useForm();
@@ -73,9 +75,13 @@ export default function Cadastro({ navigation }) {
           keyboardDismissMode='on-drag'
         >
           <View style={styles.innerContainer}>
-          <TextInput
+          <TextInputMask
             style={styles.input}
-            label="Nome"
+            type={'custom'}
+            options={{
+              mask: '*******************'
+            }}
+            placeholder="Nome"
             value={nome}
             onSubmitEditing={addProdutor}
             onChangeText={(text) => {
@@ -86,62 +92,133 @@ export default function Cadastro({ navigation }) {
             }}
             maxLength={50}
           />
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             label="CPF/CNPJ"
             value={cpf}
             onChangeText={(text) => setCpf(text)}
-          />
-          <TextInput
+          /> */}
+          <TextInputMask
             style={styles.input}
-            label="Numero"
-            value={formatPhoneNumber(telefone)}
-            onSubmitEditing={addProdutor}
-            onChangeText={(text) => setTelefone(text)}
+            type={'cnpj'}
+            value={cnpj}
+            onChangeText={(text) => setCnpj(text)}
+            placeholder="CNPJ"
             keyboardType="numeric"
           />
-          <TextInput
+          <TextInputMask
             style={styles.input}
-            label="Email"
-            value={email}
+            type={'cel-phone'}
+            options={{
+              maskType: 'BRL',
+              withDDD: true,
+              dddMask: '(99)'
+            }}
+            placeholder="Telefone"
+            value={international}
             onSubmitEditing={addProdutor}
-            onChangeText={(text) => setEmail(text)}
+            onChangeText={text => {
+              setInternational(text);
+            }}
           />
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             label="Inscrição Estadual"
             value={inscricaoEstadual}
             onChangeText={(text) => setInscricaoEstadual(text)}
+          /> */}
+          <TextInputMask
+            style={styles.input}
+            type={'only-numbers'}
+            maxLength={9}
+            placeholder="Inscrição Estadual"
+            value={inscricaoEstadual}
+            onChangeText={(text) => setInscricaoEstadual(text)}
           />
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             label="Endereço"
             value={endereco}
             onChangeText={(text) => setEndereco(text)}
+          /> */}
+          <TextInputMask
+            style={styles.input}
+            type={'custom'}
+            options={{
+              mask: '********************************'
+            }}
+            placeholder="Endereço"
+            value={endereco}
+            onChangeText={(text) => setEndereco(text)}
           />
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             label="Bairro ou Distrito"
             value={bairroDistrito}
             onChangeText={(text) => setBairroDistrito(text)}
+          /> */}
+          <TextInputMask
+            style={styles.input}
+            type={'custom'}
+            options={{
+              mask: '********************************'
+            }}
+            placeholder="Bairro ou Distrito"
+            value={bairroDistrito}
+            onChangeText={(text) => setBairroDistrito(text)}
           />
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             label="CEP"
             value={cep}
             onChangeText={(text) => setCep(text)}
+          /> */}
+          <TextInputMask
+            style={styles.input}
+            type={'zip-code'}
+            value={cep}
+            onChangeText={(text) => setCep(text)}
+            placeholder="CEP"
+            keyboardType="numeric"
           />
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             label="Cidade"
             value={cidade}
             onChangeText={(text) => setCidade(text)}
+          /> */}
+          <TextInputMask
+            style={styles.input}
+            type={'custom'}
+            options={{
+              mask: '*******************'
+            }}
+            placeholder="Cidade"
+            value={cidade}
+            onChangeText={(text) => setCidade(text)}
           />
-          <TextInput
+          {/* <TextInput
             style={styles.input}
             label="UF"
             value={uf}
             onChangeText={(text) => setUf(text)}
+          /> */}
+          {/* <TextInput
+            style={styles.input}
+            label="UF"
+            value={uf}
+            maxLength={2}
+            onChangeText={(text) => setUf(text.toUpperCase())}
+          /> */}
+          <TextInputMask
+            style={styles.input}
+            type={'custom'}
+            options={{
+              mask: 'AA'
+            }}
+            placeholder="UF"
+            value={uf}
+            onChangeText={(text) => setUf(text.toUpperCase())}
           />
           <Button
             style={styles.button}
@@ -222,6 +299,11 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     marginBottom: 10,
+    height: 40,
+    borderColor: '#000',
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: 10,
   },
   button: {
     width: '100%',

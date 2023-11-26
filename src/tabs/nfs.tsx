@@ -9,6 +9,12 @@ export default function Nfs() {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [produtosSelecionados, setProdutosSelecionados] = useState([]);
   const [quantidadeAtual, setQuantidadeAtual] = useState(0);
+  const [valorAtual, setValorAtual] = useState(0);
+  const [totaisProdutos, setTotaisProdutos] = useState([]);
+  const [totalSecao, setTotalSecao] = useState(0);
+
+
+
 
   function avancarSecao() {
     if (numSecao < secoes.length - 1) {
@@ -22,22 +28,22 @@ export default function Nfs() {
     }
   }
 
+  function adicionarProduto(produto) {
+    const totalProduto = produto.quantidade * produto.valor;
+    setTotaisProdutos([...totaisProdutos, totalProduto]);
+  
+    const novoTotal = totalSecao + totalProduto;
+    setTotalSecao(novoTotal);
+    setProdutosSelecionados([...produtosSelecionados, produto]);
+  }
+
   return (
     <VStack flex={1}>
       {numSecao === 0 && (
         <VStack alignItems='center'>
-          <Titulo px={5} w='100%' color="black" fontSize='3xl'>Quais produtos gostaria de emitir na NFEs ?</Titulo>
-          <Titulo mt={0} px={5} w='80%' fontSize='md'>Informe a quantidade e adicione</Titulo>
-          <Input
-            mt={3}
-            placeholder='Frutas, Leguminosas etc'
-            size="lg"
-            w="90%"
-            borderRadius="3xl"
-            bgColor="gray.100"
-            shadow={3}
-          />
-          <Titulo px={5} w='100%' color="black" fontSize='xl'>Categorias</Titulo>
+          <Titulo px={5} w='100%' color="black" fontSize='xl'>Quais produtos gostaria de emitir na NFEs ?</Titulo>
+          <Titulo mt={0} px={5} w='90%' fontSize='md'>Informe a quantidade, valor e adicione</Titulo>
+          <Titulo mb={4} px={5} w='100%' color="black" fontSize='xl'>Categorias</Titulo>
         </VStack>
       )}
       {numSecao === 0 && (
@@ -48,9 +54,8 @@ export default function Nfs() {
                 <VStack px={2} key={entrada.categoria}>
                   <Button
                     p={0}
-                    borderRadius={100}
                     onPress={() => setCategoriaSelecionada(entrada.categoria)}
-                    bgColor={categoriaSelecionada === entrada.categoria ? "blue.400" : "gray.200"}
+                    bgColor={categoriaSelecionada === entrada.categoria ? "blue.400" : "gray.100"}
                   >
                     <Image source={entrada.image} alt="Alternate Text" size="md" />
                   </Button>
@@ -65,42 +70,60 @@ export default function Nfs() {
               .map((entrada) => {
                 return entrada.tiposProdutos.map((tipoProduto) => {
                   return (
-                    <HStack key={tipoProduto.produto}>
-                      <Image m={3} size='lg' source={tipoProduto.image} alt="testeimage" />
+                    <Box borderWidth={1} borderColor='gray.200' borderRadius='md'>
+                    <HStack key={tipoProduto.produto} my={5} >
+                      <Image mt={20} m={3} size='lg' source={tipoProduto.image} alt="testeimage" />
                       <VStack alignItems='flex-start'>
                         <Titulo fontSize='lg' mt={0}>{tipoProduto.produto}</Titulo>
                         <VStack justifyContent='center' alignItems='center'>
                           <HStack mt={5} alignItems='center' justifyContent='center'>
-                            <Botao mt={0} bg='gray.200' w='10%' h='100%' _text={{ color: "black" }} m={2} >+</Botao>
                             <Input
-                              w='50%'
+                              w='70%'
                               h='110%'
+                              keyboardType="numeric"
                               placeholder="Quantidade..."
                               bgColor="gray.200"
                               fontSize="lg"
                               onChange={(event) => setQuantidadeAtual(parseInt(event.nativeEvent.text, 10))}
                             />
-                            <Botao mt={0} bg='gray.200' w='10%' h='100%' _text={{ color: "black" }} m={2}>-</Botao>
+                          </HStack>
+                          <HStack mt={5} alignItems='center' justifyContent='center'>
+                            <Input
+                              w='70%'
+                              h='100%'
+                              keyboardType="numeric"
+                              placeholder="Valor (Real)..."
+                              bgColor="gray.200"
+                              fontSize="lg"
+                              onChange={(event) => setValorAtual(parseFloat(event.nativeEvent.text))}
+                            />
                           </HStack>
                         </VStack>
                         <Button
                           mt={2}
-                          w='75%'
+                          w='70%'
+                          bg='green.500'
                           onPress={() => {
-                            const produto = { nome: tipoProduto.produto, quantidade: quantidadeAtual, categoria: categoriaSelecionada };
-                            setProdutosSelecionados([...produtosSelecionados, produto]);
+                            const produto = {
+                              nome: tipoProduto.produto,
+                              quantidade: quantidadeAtual,
+                              valor: valorAtual,
+                              categoria: categoriaSelecionada
+                            };
+                            adicionarProduto(produto);
                           }}
                         >
                           Adicionar
                         </Button>
                       </VStack>
                     </HStack>
+                    </Box>
                   );
                 });
               })}
             <VStack alignItems='center'>
               <Botao
-                mr={8}
+                mx={5}
                 mb={5}
                 bg='green.500'
                 _text={{ fontSize: '2xl' }}
@@ -118,22 +141,28 @@ export default function Nfs() {
           <ScrollView showsVerticalScrollIndicator={false}>
             {produtosSelecionados.map((produto, index) => {
               const tipoProduto = secoes[numSecao]?.entradaProdutos
-                ?.find((categoria) => categoria.categoria === produto.categoria)
+                ?.find((entrada) => entrada.categoria === produto.categoria)
                 ?.tiposProdutos.find((tipo) => tipo.produto === produto.nome);
 
+                const totalProduto = totaisProdutos[index];
+
               return (
-                <HStack key={index}>
-                  <Image m={3} size='lg' source={tipoProduto?.image} alt="testeimage" />
-                  <VStack alignItems='flex-start'>
-                    <Titulo fontSize='lg' mt={0}>{produto.nome}</Titulo>
-                    <Titulo mt={2} w='100%'>Quantidade: {produto.quantidade}</Titulo>
-                  </VStack>
-                </HStack>
+                <Box borderWidth={1} borderColor='gray.200' borderRadius='md'>
+                  <HStack key={index} mt={5}>
+                    <Image m={3} size='lg' source={tipoProduto?.image} alt="testeimage" />
+                    <VStack alignItems='flex-start'>
+                      <Titulo fontSize='xl' mt={0}>{produto.nome}</Titulo>
+                      <Titulo fontSize='md' mt={2} w='100%'>Quantidade: {produto.quantidade}</Titulo>
+                      <Titulo fontSize='md' mt={2} w='100%'>Valor: R$ {produto.valor}</Titulo>
+                      <Titulo mt={2} w='100%'>Total: R$ {totalProduto.toFixed(2)}</Titulo>
+                    </VStack>
+                  </HStack>
+                </Box>
               );
             })}
             <VStack alignItems='center'>
               <Botao
-                mr={8}
+                mx={5}
                 mb={5}
                 bg='green.500'
                 _text={{ fontSize: '2xl' }}
@@ -142,11 +171,12 @@ export default function Nfs() {
               >
                 Emitir Nota Fiscal
               </Botao>
+              <Titulo>Total: R$ {totalSecao.toFixed(2)}</Titulo>
             </VStack>
           </ScrollView>
         </ScrollView>
       )}
-      <Box mt={5} alignItems="center" p={5} justifyContent="center">
+      <Box mt={2} alignItems="center" p={0} justifyContent="center">
         {numSecao > 0 && numSecao < 2 && (
           <Botao onPress={() => voltarSecao()} bgColor="gray.400">
             Voltar
@@ -161,6 +191,8 @@ export default function Nfs() {
             onPress={() => {
               setNumSecao(0); // Redefine para a primeira seção
               setProdutosSelecionados([]); // Reseta os produtos selecionados
+              setTotaisProdutos([]); // Reseta os totais dos produtos
+              setTotalSecao(0); // Reseta o total da seção
             }}
           >
             Salvar
