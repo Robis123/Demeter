@@ -3,6 +3,7 @@ import React from "react";
 type User = {
   displayName: string;
   photoURL: string;
+  email: string;
   // include other properties as needed
 };
 
