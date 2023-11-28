@@ -44,9 +44,8 @@ export default function Cadastro({ navigation }) {
     register("uf");
   }, [register]);
 
-  function primeirologin(){
   const firstLogin = async() => { 
-    const q = query(collection(db, "produtores"), where("email", "==", user.email));
+    const q = query(collection(db, "usuarios"), where("email", "==", user.email));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
     // doc.data() is never undefined for query doc snapshots
@@ -60,6 +59,7 @@ export default function Cadastro({ navigation }) {
         navigation.navigate('Tabs');
         console.log('cu')
       }
+      console.log('usuario já cadastrado2s') 
       if(data.tipoUsuario === 'varejista'){
         console.log('leva pra tela varejista')
         navigation.navigate('TabsVarejista');
@@ -72,13 +72,22 @@ export default function Cadastro({ navigation }) {
     }
     });
   }
-}
-module.exports = { primeirologin };
+
   const addVarejista = async () => {
     try {
       const docRef = await addDoc(collection(db, 'usuarios'), {
-        tipoUsuario,
-        email: user.email
+        nome,
+        cpf,
+        cnpj,
+        telefone,
+        email: user.email,
+        inscricaoEstadual,
+        endereco,
+        bairroDistrito,
+        cep,
+        cidade,
+        uf,
+        tipoUsuario
       });
       navigation.navigate('TabsVarejista');
       console.log("Document written with ID: ", docRef.id);
@@ -109,7 +118,7 @@ module.exports = { primeirologin };
       console.error("Error adding document: ", e);
     }
   };
-
+  firstLogin();
   return (
     <KeyboardAvoidingView
       style={styles.container}
