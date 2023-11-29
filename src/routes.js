@@ -15,4 +15,8 @@ route.post('/teste', upload.none(), async (req, res) => {
     htmlPDF(req,res)
 });
 
+route.get('/index', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+  });
+
 module.exports = route;

@@ -28,6 +28,7 @@ app.use((req, res, next) => {
 });
 app.use('/',routes);
 
+
 /**
  * Lida com erro 404: Recurso não encontrado
  */
