@@ -38,8 +38,35 @@ serie = getRandomHash()
 vl_total = req.body.vl_total
 pesoliquido = (10 * req.body.nu_transport_amount_transported_volumes)
 pesobruto = pesoliquido + (0.100 * req.body.nu_transport_amount_transported_volumes)
-const htmlContent = `<!-- Header -->
 
+produtos = JSON.parse(req.body.produtos)
+let htmlString = ""; // Inicialize uma string vazia para armazenar o HTML
+
+produtos.forEach(prod => {
+  // Use a variável htmlString para acumular o HTML
+  htmlString += `
+    <tr class="titles">
+      <th class="cod" style="width: 15.5mm">CÓDIGO</th>
+      <th class="descrit" style="width: 66.1mm">${prod.nome}</th>
+      <th class="ncmsh">05</th>
+      <th class="cst">030</th> 
+      <th class="cfop">5.102</th>
+      <th class="un">Caixas</th>
+      <th class="amount">${prod.qtd}</th>  
+      <th class="valUnit">${prod.vlrunit}</th>              
+      <th class="valTotal">${prod.qtd * prod.vlrunit}</th>   
+      <th class="bcIcms">0,00</th>
+      <th class="valIcms">0,00</th>
+      <th class="valIpi">0,00</th>
+      <th class="aliqIcms">0,00</th>
+      <th class="aliqIpi">0,00</th>
+    </tr>`;
+});
+
+// Agora a variável htmlString contém o HTML para todos os produtos
+console.log(htmlString);
+
+const htmlContent = `<!-- Header -->
 <style type="text/css">
     @media print {
         @page {
@@ -780,8 +807,9 @@ const htmlContent = `<!-- Header -->
                         <th class="aliqIcms">ALIQ.ICMS</th>
                         <th class="aliqIpi">ALIQ.IPI</th>
                     </tr>
+                    `+ htmlString +`
                 </thead>
-                <tbody>
+                <tbody>  
                     items:
                 </tbody>
             </table>
@@ -830,7 +858,7 @@ const htmlContent = `<!-- Header -->
                 </tr>
             </tbody>
         </table>
-
+                            
         <footer>
             <table cellpadding="0" cellspacing="0">
                 <tbody>
@@ -846,3 +874,5 @@ const htmlContent = `<!-- Header -->
 const outputPath = getRandomHash()+'.pdf';
 gerarPDF(htmlContent, outputPath,req,res);}
 module.exports = { htmlPDF };
+
+
