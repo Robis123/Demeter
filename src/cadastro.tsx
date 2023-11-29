@@ -1,13 +1,13 @@
-import { Button, TextInput, RadioButton } from "react-native-paper";
-import { KeyboardAvoidingView, Platform, StyleSheet, Keyboard, View, Text, ScrollView } from "react-native";
+import { Button, RadioButton } from "react-native-paper";
+import { KeyboardAvoidingView, Platform, StyleSheet, View, Text, ScrollView } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { addDoc, collection, db } from "./firebase/firebase.js";
 import { AuthContext } from './context/authContext';
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { TextInputMask } from 'react-native-masked-text';
-import { getDocs, query, where } from "firebase/firestore";
+import { doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import UserContext from "./context/userContext";
+import {cadastradoSucesso, Toast} from "./utils/alerts";
 
 
 export default function Cadastro({ navigation }) {
@@ -26,7 +26,47 @@ export default function Cadastro({ navigation }) {
   const [international, setInternational] = useState("");
   const { signOut } = useContext(AuthContext);
   const [tipoUsuario, setTipoUsuario] = useState("");
+ 
+ 
+ 
   const user = React.useContext(UserContext);
+
+  
+
+  const firstLogin = async() => { 
+    const q = query(collection(db, "usuarios"), where("email", "==", user.email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        const data = doc.data();
+
+        console.log(doc.id, " => ", data);
+
+        if (data.tipoUsuario === 'produtor') {
+          console.log('usuario já cadastrado como produtor');
+          navigation.navigate('Tabs');
+          return
+        } else if (data.tipoUsuario === 'varejista') {
+          console.log('usuario já cadastrado como varejista');
+          navigation.navigate('TabsVarejista');
+          return
+        }
+      } else {
+        console.log("usuario não cadastrado");
+        navigation.navigate('Cadastro');
+        return
+      }
+  }
+
+  useEffect(() => {
+    // write your code here, it's like componentWillMount
+    firstLogin();
+    
+}, [])
+
+
+
 
 
   const { register, handleSubmit } = useForm();
@@ -44,34 +84,7 @@ export default function Cadastro({ navigation }) {
     register("uf");
   }, [register]);
 
-  const firstLogin = async() => { 
-    const q = query(collection(db, "usuarios"), where("email", "==", user.email));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, " => ",doc.data());
-      
-    if (doc.exists()){
-      const data = doc.data();
-      console.log('usuario já cadastrado') 
-      if(data.tipoUsuario === 'produtor'){
-        console.log('leva pra tela produtor')
-        navigation.navigate('Tabs');
-        console.log('cu')
-      }
-      console.log('usuario já cadastrado2s') 
-      if(data.tipoUsuario === 'varejista'){
-        console.log('leva pra tela varejista')
-        navigation.navigate('TabsVarejista');
-      }
-      else{
-        navigation.navigate('Cadastro')
-      }
-    } else {
-      console.log("usuario não cadastrado");
-    }
-    });
-  }
+  
 
   const addVarejista = async () => {
     try {
@@ -87,7 +100,8 @@ export default function Cadastro({ navigation }) {
         cep,
         cidade,
         uf,
-        tipoUsuario
+        tipoUsuario,
+        produtos: [] 
       });
       navigation.navigate('TabsVarejista');
       console.log("Document written with ID: ", docRef.id);
@@ -97,7 +111,8 @@ export default function Cadastro({ navigation }) {
   };
   const addProdutor = async () => {
     try {
-      const docRef = await addDoc(collection(db, "usuarios"), {
+      // Defina o ID personalizado (substitua 'ID_PERSONALIZADO' pelo ID desejado)
+      const docRef = await setDoc(doc(db, "usuarios", user.uid), {
         nome,
         cpf,
         cnpj,
@@ -111,14 +126,13 @@ export default function Cadastro({ navigation }) {
         uf,
         tipoUsuario
       });
-
+  
       navigation.navigate('Tabs');
-      console.log("Document written with ID: ", docRef.id);
+      console.log("Document written with ID: " + user.uid);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   };
-  firstLogin();
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -252,7 +266,7 @@ export default function Cadastro({ navigation }) {
                   mode="contained"
                   onPress={() => {
                     addProdutor();
-
+                    cadastradoSucesso();
                   }}
                 >
                   Cadastrar
@@ -264,7 +278,7 @@ export default function Cadastro({ navigation }) {
                 <Button
                   style={styles.button}
                   mode="contained"
-                  onPress={() => { addVarejista(); }
+                  onPress={() => { addVarejista(); cadastradoSucesso();}
                   }
                 >
                   Cadastrar
@@ -277,6 +291,7 @@ export default function Cadastro({ navigation }) {
             </Button>
           </View>
         </ScrollView>
+        <Toast/>
       </View>
     </KeyboardAvoidingView>
   );

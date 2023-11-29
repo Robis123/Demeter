@@ -1,9 +1,9 @@
-import { NativeBaseProvider, StatusBar, View, Text } from "native-base";
+import { NativeBaseProvider, StatusBar} from "native-base";
 import { TEMAS } from "./src/estilos/temas";
 import Rotas from "./src/rotas";
 import 'expo-dev-client';
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import auth from '@react-native-firebase/auth';
 import Login from "./src/login";
 import { AuthContext } from './src/context/authContext';
@@ -86,7 +86,7 @@ export default function App() {
       <AuthContext.Provider value={{ signOut }}>
         <NativeBaseProvider theme={TEMAS}>
           <StatusBar backgroundColor={TEMAS.colors.blue[300]} />
-          <Rotas />
+          <Rotas  />
         </NativeBaseProvider>
       </AuthContext.Provider>
     </UserContext.Provider>

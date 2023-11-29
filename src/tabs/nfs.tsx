@@ -1,8 +1,10 @@
 import { Box, ScrollView, HStack, Button, Image, VStack, Input } from "native-base";
 import { Titulo } from "../components/titulo";
 import { Botao } from "../components/botao";
-import React, { useState } from "react";
+import { useState } from "react";
 import { secoes } from '../utils/nfsSecoes';
+import NFSE from '../utils/api';
+
 
 export default function Nfs() {
   const [numSecao, setNumSecao] = useState(0);
@@ -167,7 +169,10 @@ export default function Nfs() {
                 bg='green.500'
                 _text={{ fontSize: '2xl' }}
                 w='60%'
-                onPress={avancarSecao}
+                onPress={() => {
+                  avancarSecao();
+                  NFSE('123456789', '123456789', '99.123.123/1234-99', 'Diogo Bites Faria de Paula', 'Neo Tokyo', '71387390', '24/11/23', 'jardins mangueiral rua H casa 7', 'Brasília', 'DF', '987654321', '10', 'caixa', '(61)99642-3502', '143,50', '[{"nome": "banana","qtd": 10,"vlrunit": 5},{"nome": "maça","qtd": 10,"vlrunit": 5}]');
+                }}
               >
                 Emitir Nota Fiscal
               </Botao>

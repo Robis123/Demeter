@@ -1,15 +1,34 @@
 import { Box, ScrollView, HStack, Button, Image, VStack, Input, Flex } from "native-base";
 import { Titulo } from "../components/titulo";
 import { Botao } from "../components/botao";
-import { useState } from "react";
+import { doc, setDoc, arrayUnion } from "firebase/firestore";
+import { db } from "../firebase/firebase.js";
+import React, { useState, useContext } from "react";
 import { secoes } from "../utils/homeSecoes";
-import React, { ReactNode } from "react";
+import UserContext from "../context/userContext";
+import { produtoSalvo, Toast} from "../utils/alerts";
+
 
 
 export default function Cadastro() {
+  const user = React.useContext(UserContext);
+
   const [numSecao, setNumSecao] = useState(0);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
+  const [quantidade, setQuantidade] = useState("");
+
+  const attProduto = async (categoria, produto, quantidade) => {
+    try {
+      const userRef = doc(db, 'usuarios', user.uid);
+      await setDoc(userRef, { produtos: arrayUnion({categoria, produto, quantidade}) }, { merge: true });
+      console.log("Produto adicionado com sucesso");
+    } catch (e) {
+      console.error("Erro ao adicionar produto: ", e);
+    }
+  };
+
+
 
   function avancarSecao() {
     if (numSecao < secoes.length - 1) {
@@ -23,9 +42,6 @@ export default function Cadastro() {
   }
   return (
     <VStack flex={1}>
-      {numSecao >= 0 && numSecao < 2 && <VStack alignItems='center'>
-        <Input mt={3} placeholder='Pesquise aqui...' size="lg" w="90%" borderRadius="3xl" bgColor="gray.100" shadow={3} />
-      </VStack>}
       <Titulo alignItems="center" p={5} justifyContent="center"> {" "}{secoes[numSecao].titulo}{" "} </Titulo>
       <ScrollView>
         <Box mt={1} mb={0} alignItems="center" pr={5} pl={5} justifyContent="center" >
@@ -63,18 +79,21 @@ export default function Cadastro() {
             
           {secoes[numSecao]?.entradaAdicionar?.map(() => {
             return (
-              <VStack flex={1} alignItems='center' >
+              <VStack flex={1} alignItems='center' p={5}>
                 <Image borderRadius={100} source={produtoSelecionado.image} alt="Alternate Text" size="xl" />
-                <Titulo color='blue.500'>{produtoSelecionado.produto}</Titulo>
-                <HStack>
-                  <Botao bg='gray.200' w='40%' h='60%' _text={{ color: "black" }} m={2}>Atualizar </Botao>
-                  <Botao bg='gray.200' w='40%' h='60%' _text={{ color: "black" }} m={2}>Excluir</Botao>
+                <Titulo color='black'>{produtoSelecionado.produto}</Titulo>
+                <Titulo fontSize='md'>Informe a quantidade que deseja adicionar do produto:</Titulo>
+                <HStack alignItems='center' justifyContent='center'>
+                  <Input keyboardType="numeric"  mt={5} w='90%' h='60%' placeholder="Quantidade.." bgColor="gray.200" fontSize="lg" value={quantidade} onChangeText={setQuantidade}/>
                 </HStack>
-                <HStack mt={5} alignItems='center' justifyContent='center'>
-                  <Botao bg='gray.200' w='10%' h='60%' _text={{ color: "black" }} m={2} >+</Botao>
-                  <Input mt={7} w='40%' h='60%' placeholder="Quantidade.." bgColor="gray.200" fontSize="lg"/>
-                  <Botao bg='gray.200' w='10%' h='60%' _text={{ color: "black" }} m={2}>-</Botao>
-                </HStack>
+                <VStack>
+                  <Button _text={{ fontSize: '3xl' }} m={4} p={5} bg='green.500' onPress={() => {produtoSalvo();setNumSecao(numSecao - 2); attProduto( categoriaSelecionada, produtoSelecionado.produto, quantidade );}} >
+                    Salvar 
+                  </Button>
+                  <Button _text={{ fontSize: '3xl' }} m={3} p={5} bg='gray.500' onPress={() => {setNumSecao(numSecao - 2);}} >
+                    Cancelar
+                  </Button>
+                </VStack>
               </VStack>
             );
           })}
@@ -85,13 +104,9 @@ export default function Cadastro() {
               Voltar
             </Botao>
           )}
-          {numSecao >= 2 && (
-            <Botao bg='green.500' _text={{ fontSize: '3xl'}} p={5} w='70%' onPress={() => setNumSecao(numSecao - 2)} >
-              Salvar
-            </Botao>
-          )}
         </Box>
       </ScrollView>
+      <Toast />
     </VStack>
   );
 }

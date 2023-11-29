@@ -5,7 +5,6 @@ import Image4 from "../assets/image4.png";
 import Image5 from "../assets/image5.png";
 import Image6 from "../assets/image6.png";
 
-
 const secoes = [
   {
     id: 1,
@@ -51,39 +50,8 @@ const secoes = [
         id: 1,
         categoria: 'Frutas',
         tiposProdutos: [
-          {
-            id: 1,
-            produto: 'Banana',
-            image: Image1
-          },
-          {
-            id: 2,
-            produto: 'Maça',
-            image: Image2
-          },
-          {
-            id: 3,
-            produto: 'Uva',
-            image: Image3
-          },
-          {
-            id: 4,
-            produto: 'Melancia',
-            image: Image4
-          },
-          {
-            id: 5,
-            produto: 'Teste',
-            image: Image5
-          },
-          {
-            id: 6,
-            produto: 'Pera',
-            image: Image6
-          },
+          
         ]
-        
-
       },
       {
         id: 2,
@@ -115,7 +83,6 @@ const secoes = [
             image: Image5
           },
         ]
-
       },
       {
         id: 3,
@@ -157,7 +124,6 @@ const secoes = [
             image: Image6
           },
         ]
-
       },
       {
         id: 4,
@@ -216,7 +182,6 @@ const secoes = [
             image: Image3
           },
         ]
-
       },
       {
         id: 6,
@@ -238,7 +203,6 @@ const secoes = [
             image: Image3
           },
         ]
-
       },
     ],
   },

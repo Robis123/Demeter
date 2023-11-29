@@ -4,6 +4,7 @@ type User = {
   displayName: string;
   photoURL: string;
   email: string;
+  uid: string;
   // include other properties as needed
 };
 

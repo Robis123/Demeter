@@ -1,9 +1,9 @@
-import React from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import logo from "./assets/logo.png";
 import bg from "./assets/bg.png";
 
 export default function Login() {
+  
   return (
     <View style={styles.container}>
       <Image source={bg} style={styles.backgroundImage} />
