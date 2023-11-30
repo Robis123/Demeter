@@ -1,9 +1,38 @@
-import Image1 from "../assets/image1.png";
-import Image2 from "../assets/image2.png";
-import Image3 from "../assets/image3.png";
-import Image4 from "../assets/image4.png";
-import Image5 from "../assets/image5.png";
-import Image6 from "../assets/image6.png";
+import Frutas from "../assets/image1.png";
+import Hortalicas from "../assets/image2.png";
+import Leguminosas from "../assets/image3.png";
+import Cereais from "../assets/image4.png";
+import Adubos from "../assets/image5.png";
+import Mudas from "../assets/image6.png";
+import Acelga from '../assets/Acelga.png';
+import AduboMineral from '../assets/AduboMineral.png';
+import AduboOrganico from '../assets/AduboOrganico.png';
+import AduboOrganoMineral from '../assets/AduboOrganomineral.png';
+import Alface from '../assets/Alface.png';
+import Amendoim from '../assets/Amendoim.png';
+import Arroz from '../assets/Arroz.png';
+import Aveia from '../assets/Aveia.png';
+import Brocolis from '../assets/Brócolis.png';
+import Centeio from '../assets/Centeio.png';
+import Cevada from '../assets/Cevada.png';
+import Couve from '../assets/Couve.png';
+import Ervilha from '../assets/Ervilha.png';
+import Espinafre from '../assets/Espinafre.png';
+import Feijao from '../assets/Feijão.png';
+import GraoDeBico from '../assets/GrãodeBico.png';
+import Lentilha from '../assets/Lentilha.png';
+import Mamao from '../assets/Mamão.png';
+import Milho from '../assets/Milho.png';
+import Muda1 from '../assets/Muda1.png';
+import Muda2 from '../assets/Muda2.png';
+import Muda3 from '../assets/Muda3.png';
+import Soja from '../assets/Soja.png';
+import Trigo from '../assets/Trigo.png';
+import Maca from '../assets/Maça.png';
+import Banana from '../assets/Banana.png';
+import Uva from '../assets/Uva.png';
+import Pera from '../assets/Pera.png';
+import Morango from '../assets/Morango.png';
 
 const secoes = [
   
@@ -14,32 +43,32 @@ const secoes = [
       {
         id: 1,
         categoria: 'Frutas',
-        image: Image1
+        image: Frutas
       },
       {
         id: 2,
         categoria: 'Hortaliças',
-        image: Image2
+        image: Hortalicas
       },
       {
         id: 3,
         categoria: 'Leguminosas',
-        image: Image3
+        image: Leguminosas
       },
       {
         id: 4,
         categoria: 'Cereais',
-        image: Image4
+        image: Cereais
       },
       {
         id: 5,
         categoria: 'Adubo',
-        image: Image5
+        image: Adubos
       },
       {
         id: 6,
         categoria: 'Mudas',
-        image: Image6
+        image: Mudas
       },
     ],
   },
@@ -54,32 +83,27 @@ const secoes = [
           {
             id: 1,
             produto: 'Banana',
-            image: Image1
+            image: Banana
           },
           {
             id: 2,
             produto: 'Maça',
-            image: Image2
+            image: Maca
           },
           {
             id: 3,
             produto: 'Uva',
-            image: Image3
+            image: Uva
           },
           {
             id: 4,
-            produto: 'Melancia',
-            image: Image4
+            produto: 'Morango',
+            image: Morango
           },
           {
             id: 5,
-            produto: 'Teste',
-            image: Image5
-          },
-          {
-            id: 6,
             produto: 'Pera',
-            image: Image6
+            image: Pera
           },
         ]
         
@@ -92,27 +116,27 @@ const secoes = [
           {
             id: 1,
             produto: 'Alface',
-            image: Image1
+            image: Alface
           },
           {
             id: 2,
             produto: 'Couve',
-            image: Image2
+            image: Couve
           },
           {
             id: 3,
-            produto: 'Acelga',
-            image: Image3
+            produto: 'Espinafre',
+            image: Espinafre
           },
           {
             id: 4,
-            produto: 'Espinafre',
-            image: Image4
+            produto: 'Brócoli',
+            image: Brocolis
           },
           {
             id: 5,
-            produto: 'Brócolis',
-            image: Image5
+            produto: 'Acelga',
+            image: Acelga
           },
         ]
 
@@ -124,37 +148,37 @@ const secoes = [
           {
             id: 1,
             produto: 'Amendoim',
-            image: Image1
+            image: Amendoim
           },
           {
             id: 2,
             produto: 'Grão de bico',
-            image: Image2
+            image: GraoDeBico
           },
           {
             id: 3,
             produto: 'Ervilha',
-            image: Image3
+            image: Ervilha
           },
           {
             id: 4,
             produto: 'Feijao',
-            image: Image4
+            image: Feijao
           },
           {
             id: 5,
             produto: 'Mamão',
-            image: Image5
+            image: Mamao
           },
           {
             id: 6,
             produto: 'Lentilha',
-            image: Image6
+            image: Lentilha
           },
           {
             id: 7,
             produto: 'Soja',
-            image: Image6
+            image: Soja
           },
         ]
 
@@ -166,32 +190,32 @@ const secoes = [
           {
             id: 1,
             produto: 'Arroz',
-            image: Image1
+            image: Arroz
           },
           {
             id: 2,
             produto: 'Trigo',
-            image: Image2
+            image: Trigo
           },
           {
             id: 3,
             produto: 'Milho',
-            image: Image3
+            image: Milho
           },
           {
             id: 4,
             produto: 'Cevada',
-            image: Image4
+            image: Cevada
           },
           {
             id: 5,
             produto: 'Aveia',
-            image: Image5
+            image: Aveia
           },
           {
             id: 6,
             produto: 'Centeio',
-            image: Image6
+            image: Centeio
           },
         ]
 
@@ -203,17 +227,17 @@ const secoes = [
           {
             id: 1,
             produto: 'Adubo orgânico',
-            image: Image1
+            image: AduboOrganico
           },
           {
             id: 2,
             produto: 'Adubo mineral',
-            image: Image2
+            image: AduboMineral
           },
           {
             id: 3,
             produto: 'Adubo organomineral',
-            image: Image3
+            image: AduboOrganoMineral
           },
         ]
 
@@ -225,17 +249,17 @@ const secoes = [
           {
             id: 1,
             produto: 'Muda 1',
-            image: Image1
+            image: Muda1
           },
           {
             id: 2,
             produto: 'Muda 2',
-            image: Image2
+            image: Muda2
           },
           {
             id: 3,
             produto: 'Muda 3',
-            image: Image3
+            image: Muda3
           },
         ]
 
