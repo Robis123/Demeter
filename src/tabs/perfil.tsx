@@ -1,16 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Alert, ImageURISource, ImageRequireSource } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { db } from "../firebase/firebase.js";
-import { collection, getDocs, query, where, doc, deleteDoc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc, updateDoc } from "firebase/firestore";
 import { AuthContext } from '../context/authContext';
 import UserContext from "../context/userContext";
+import img from '../assets/Morango.png';
 
 
 const Stack = createNativeStackNavigator();
 
 const PerfilScreen = ({ navigation }) => {
+  type ImageSourcePropType = ImageURISource | ImageURISource[] | ImageRequireSource;
+  interface ImageURISource {
+   
+    uri?: string | undefined;
+  }
   const user = React.useContext(UserContext);
   const { signOut } = useContext(AuthContext);
 
@@ -34,7 +40,7 @@ const PerfilScreen = ({ navigation }) => {
         
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Notas')}
+          onPress={() => 'https://firebasestorage.googleapis.com/v0/b/demeter-2a73f.appspot.com/o/11.111.1231234-99%2F323494.pdf?alt=media&token=a1bc5baf-bd0e-4018-a64a-dbe1ebb227c4'}
         >
           <Ionicons name="clipboard" size={24} color="#fff" />
           <Text style={styles.buttonText}>Notas</Text>
@@ -76,7 +82,7 @@ const ProdutosScreen = () => {
 
     getProdutos();
   }, [user]);
-
+  
   const handleDeleteProduto = async (produtoNome) => {
     try{
       const usuariosRef = doc(db, 'usuarios', user.uid);
@@ -113,6 +119,7 @@ const ProdutosScreen = () => {
   };
 
   const renderItem = ({ item }) => (
+    
     <View style={styles.produtoContainer}>
       <View style={styles.textContainer}>
         <Text>Categoria: {item.categoria}</Text>
@@ -123,7 +130,7 @@ const ProdutosScreen = () => {
         <Ionicons name="trash-bin-outline" size={20} color="#4FAF5A" />
       </TouchableOpacity>
     </View>
-  );
+  ); 
   
 
   return (
@@ -145,6 +152,8 @@ const ProdutosScreen = () => {
 const NotasScreen = () => (
   <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
     <Text>Notas Screen</Text>
+    
+    
     {/* Adicione aqui a lógica para mostrar as notas do usuário */}
   </View>
 );

@@ -7,6 +7,7 @@ import React, { useState, useContext } from "react";
 import { secoes } from "../utils/homeSecoes";
 import UserContext from "../context/userContext";
 import { produtoSalvo, Toast} from "../utils/alerts";
+import { ImageSourcePropType } from "react-native";
 
 
 
@@ -14,12 +15,17 @@ import { produtoSalvo, Toast} from "../utils/alerts";
 export default function Cadastro() {
   const user = React.useContext(UserContext);
 
+  const images = [
+    
+  ];
+
   const [numSecao, setNumSecao] = useState(0);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [quantidade, setQuantidade] = useState("");
 
   const attProduto = async (categoria, produto, quantidade) => {
+  
     const img = [
       {
         "banana": "../assets/Banana.png",

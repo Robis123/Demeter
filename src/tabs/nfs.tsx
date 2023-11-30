@@ -1,210 +1,171 @@
-import { Box, ScrollView, HStack, Button, Image, VStack, Input } from "native-base";
-import { Titulo } from "../components/titulo";
-import { Botao } from "../components/botao";
-import { useState } from "react";
-import { secoes } from '../utils/nfsSecoes';
-import NFSE from '../utils/api';
+import React, { useContext, useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, FlatList } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { AuthContext } from '../context/authContext';
+import UserContext from '../context/userContext';
+import { collection, getDocs, query, where, doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase/firebase.js";
 
+const NotasScreen = () => {
+  const user = useContext(UserContext);
+  const [valor, setValor] = useState('');
+  const [produtos, setProdutos] = useState([]);
 
-export default function Nfs() {
-  const [numSecao, setNumSecao] = useState(0);
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
-  const [produtosSelecionados, setProdutosSelecionados] = useState([]);
-  const [quantidadeAtual, setQuantidadeAtual] = useState(0);
-  const [valorAtual, setValorAtual] = useState(0);
-  const [totaisProdutos, setTotaisProdutos] = useState([]);
-  const [totalSecao, setTotalSecao] = useState(0);
+  // Função para adicionar um produto à lista
+  const adicionarProduto = () => {
+    // Adicione a lógica para adicionar o produto à lista
+    // Você pode usar setProdutos([...produtos, { categoria: '', produto: '', quantidade: '', valor }]);
+    // Certifique-se de validar os campos antes de adicionar
+    console.log('produto adicionado')
+  };
 
+  // Função para emitir a nota fiscal (vamos implementar posteriormente)
+  const emitirNotaFiscal = () => {
+    // Adicione a lógica para emitir a nota fiscal
+    // Por enquanto, podemos apenas exibir um log
+    console.log('Nota Fiscal emitida:', { valor, produtos });
+  };
 
+  // Função para obter os produtos do usuário
+  const getProdutos = async () => {
+    try {
+      const produtosRef = collection(db, 'usuarios');
+      const q = query(produtosRef, where('email', '==', user.email));
+      const querySnapshot = await getDocs(q);
 
-
-  function avancarSecao() {
-    if (numSecao < secoes.length - 1) {
-      setNumSecao(numSecao + 1);
+      const produtosData = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        produtosData.push(...data.produtos);
+      });
+      setProdutos(produtosData);
+    } catch (error) {
+      console.error('Erro ao obter produtos:', error);
     }
-  }
+  };
 
-  function voltarSecao() {
-    if (numSecao > 0) {
-      setNumSecao(numSecao - 1);
-    }
-  }
-
-  function adicionarProduto(produto) {
-    const totalProduto = produto.quantidade * produto.valor;
-    setTotaisProdutos([...totaisProdutos, totalProduto]);
-  
-    const novoTotal = totalSecao + totalProduto;
-    setTotalSecao(novoTotal);
-    setProdutosSelecionados([...produtosSelecionados, produto]);
-  }
+  useEffect(() => {
+    getProdutos();
+  }, [user]);
 
   return (
-    <VStack flex={1}>
-      {numSecao === 0 && (
-        <VStack alignItems='center'>
-          <Titulo px={5} w='100%' color="black" fontSize='xl'>Quais produtos gostaria de emitir na NFEs ?</Titulo>
-          <Titulo mt={0} px={5} w='90%' fontSize='md'>Informe a quantidade, valor e adicione</Titulo>
-          <Titulo mb={4} px={5} w='100%' color="black" fontSize='xl'>Categorias</Titulo>
-        </VStack>
-      )}
-      {numSecao === 0 && (
-        <ScrollView>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <HStack my={2}>
-              {secoes[numSecao]?.entradaCategoria?.map((entrada) => (
-                <VStack px={2} key={entrada.categoria}>
-                  <Button
-                    p={0}
-                    onPress={() => setCategoriaSelecionada(entrada.categoria)}
-                    bgColor={categoriaSelecionada === entrada.categoria ? "blue.400" : "gray.100"}
-                  >
-                    <Image source={entrada.image} alt="Alternate Text" size="md" />
-                  </Button>
-                  <Titulo fontSize='md' mt={0}>{entrada.categoria}</Titulo>
-                </VStack>
-              ))}
-            </HStack>
-          </ScrollView>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {secoes[numSecao]?.entradaProdutos
-              ?.filter((produto) => !categoriaSelecionada || produto.categoria === categoriaSelecionada)
-              .map((entrada) => {
-                return entrada.tiposProdutos.map((tipoProduto) => {
-                  return (
-                    <Box borderWidth={1} borderColor='gray.200' borderRadius='md'>
-                    <HStack key={tipoProduto.produto} my={5} >
-                      <Image mt={20} m={3} size='lg' source={tipoProduto.image} alt="testeimage" />
-                      <VStack alignItems='flex-start'>
-                        <Titulo fontSize='lg' mt={0}>{tipoProduto.produto}</Titulo>
-                        <VStack justifyContent='center' alignItems='center'>
-                          <HStack mt={5} alignItems='center' justifyContent='center'>
-                            <Input
-                              w='70%'
-                              h='110%'
-                              keyboardType="numeric"
-                              placeholder="Quantidade..."
-                              bgColor="gray.200"
-                              fontSize="lg"
-                              onChange={(event) => setQuantidadeAtual(parseInt(event.nativeEvent.text, 10))}
-                            />
-                          </HStack>
-                          <HStack mt={5} alignItems='center' justifyContent='center'>
-                            <Input
-                              w='70%'
-                              h='100%'
-                              keyboardType="numeric"
-                              placeholder="Valor (Real)..."
-                              bgColor="gray.200"
-                              fontSize="lg"
-                              onChange={(event) => setValorAtual(parseFloat(event.nativeEvent.text))}
-                            />
-                          </HStack>
-                        </VStack>
-                        <Button
-                          mt={2}
-                          w='70%'
-                          bg='green.500'
-                          onPress={() => {
-                            const produto = {
-                              nome: tipoProduto.produto,
-                              quantidade: quantidadeAtual,
-                              valor: valorAtual,
-                              categoria: categoriaSelecionada
-                            };
-                            adicionarProduto(produto);
-                          }}
-                        >
-                          Adicionar
-                        </Button>
-                      </VStack>
-                    </HStack>
-                    </Box>
-                  );
-                });
-              })}
-            <VStack alignItems='center'>
-              <Botao
-                mx={5}
-                mb={5}
-                bg='green.500'
-                _text={{ fontSize: '2xl' }}
-                w='60%'
-                onPress={avancarSecao}
-              >
-                Continuar
-              </Botao>
-            </VStack>
-          </ScrollView>
-        </ScrollView>
-      )}
-      {numSecao === 1 && (
-        <ScrollView>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {produtosSelecionados.map((produto, index) => {
-              const tipoProduto = secoes[numSecao]?.entradaProdutos
-                ?.find((entrada) => entrada.categoria === produto.categoria)
-                ?.tiposProdutos.find((tipo) => tipo.produto === produto.nome);
+    <View style={styles.container}>
+      <Text style={styles.title}>Minha Nota Fiscal</Text>
+      <Text style={styles.subtitle}>Informe a quantidade e valor do produto que deseja adicionar a nota fiscal:</Text>
 
-                const totalProduto = totaisProdutos[index];
+      {/* Lista de produtos */}
+      <FlatList
+        data={produtos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.produtoContainer}>
+            <View style={styles.textContainer}>
+              <Text>Categoria: {item.categoria}</Text>
+              <Text>Produto: {item.produto}</Text>
+              <Text>Quantidade: {item.quantidade}</Text>
+            </View>
+            <View style={styles.textContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Valor"
+                keyboardType="numeric"
+                value={valor}
+                onChangeText={(text) => setValor(text)}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Quantidade"
+                keyboardType="numeric"
+                value={valor}
+                onChangeText={(text) => setValor(text)}
+              />
 
-              return (
-                <Box borderWidth={1} borderColor='gray.200' borderRadius='md'>
-                  <HStack key={index} mt={5}>
-                    <Image m={3} size='lg' source={tipoProduto?.image} alt="testeimage" />
-                    <VStack alignItems='flex-start'>
-                      <Titulo fontSize='xl' mt={0}>{produto.nome}</Titulo>
-                      <Titulo fontSize='md' mt={2} w='100%'>Quantidade: {produto.quantidade}</Titulo>
-                      <Titulo fontSize='md' mt={2} w='100%'>Valor: R$ {produto.valor}</Titulo>
-                      <Titulo mt={2} w='100%'>Total: R$ {totalProduto.toFixed(2)}</Titulo>
-                    </VStack>
-                  </HStack>
-                </Box>
-              );
-            })}
-            <VStack alignItems='center'>
-              <Botao
-                mx={5}
-                mb={5}
-                bg='green.500'
-                _text={{ fontSize: '2xl' }}
-                w='60%'
-                onPress={() => {
-                  avancarSecao();
-                  NFSE('123456789', '123456789', '99.123.123/1234-99', 'Diogo Bites Faria de Paula', 'Neo Tokyo', '71387390', '24/11/23', 'jardins mangueiral rua H casa 7', 'Brasília', 'DF', '987654321', '10', 'caixa', '(61)99642-3502', '143,50', '[{"nome": "banana","qtd": 10,"vlrunit": 5},{"nome": "maça","qtd": 10,"vlrunit": 5}]');
-                }}
-              >
-                Emitir Nota Fiscal
-              </Botao>
-              <Titulo>Total: R$ {totalSecao.toFixed(2)}</Titulo>
-            </VStack>
-          </ScrollView>
-        </ScrollView>
-      )}
-      <Box mt={2} alignItems="center" p={0} justifyContent="center">
-        {numSecao > 0 && numSecao < 2 && (
-          <Botao onPress={() => voltarSecao()} bgColor="gray.400">
-            Voltar
-          </Botao>
+              {/* Botão de adição de produto */}
+              <TouchableOpacity style={styles.addButton} onPress={adicionarProduto}>
+                <Ionicons name="add" size={20} color="#fff" />
+                <Text style={styles.buttonText}>Adicionar Produto</Text>
+              </TouchableOpacity>
+            </View>
+            {/* Ícone de exclusão (vamos alterar a função depois) */}
+            <TouchableOpacity style={styles.deleteButton}>
+              <Ionicons name="add" size={20} color="#4FAF5A" />
+            </TouchableOpacity>
+          </View>
         )}
-        {numSecao >= 2 && (
-          <Botao
-            bg='green.500'
-            _text={{ fontSize: '3xl' }}
-            p={5}
-            w='70%'
-            onPress={() => {
-              setNumSecao(0); // Redefine para a primeira seção
-              setProdutosSelecionados([]); // Reseta os produtos selecionados
-              setTotaisProdutos([]); // Reseta os totais dos produtos
-              setTotalSecao(0); // Reseta o total da seção
-            }}
-          >
-            Salvar
-          </Botao>
-        )}
+      />
 
-      </Box>
-    </VStack>
+      {/* Campo de entrada para o valor */}
+
+      {/* Botão para emitir a nota fiscal */}
+      <TouchableOpacity style={styles.emitirButton} onPress={emitirNotaFiscal}>
+        <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
+      </TouchableOpacity>
+    </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  subtitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#808080',
+  },
+  produtoContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  textContainer: {
+    margin: 10,
+  },
+  deleteButton: {
+    marginLeft: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+    width: '80%',
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#4FAF5A',
+    borderRadius: 10,
+    width: '80%',
+    justifyContent: 'center',
+  },
+  emitirButton: {
+    backgroundColor: '#4FAF5A',
+    borderRadius: 10,
+    padding: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    marginLeft: 10,
+  },
+});
+
+export default NotasScreen;
