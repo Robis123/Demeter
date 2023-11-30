@@ -1,160 +1,170 @@
-import { Titulo } from "../components/titulo";
-import { Botao } from "../components/botao";
-import { AuthContext } from '../context/authContext';
-import UserContext from "../context/userContext";
-import React, { useContext, useState } from "react";
-import { Box, ScrollView, HStack, Button, Image, VStack, Input, Flex, Divider } from "native-base";
-import { secoes } from "../utils/perfilSecoes";
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { db } from "../firebase/firebase.js";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { cadastradoSucesso, produtoSalvo, Toast } from "../utils/alerts";
+import { AuthContext } from '../context/authContext';
+import UserContext from "../context/userContext";
 
+const Stack = createNativeStackNavigator();
 
-export default function Perfil() {
-
+const PerfilScreen = ({ navigation }) => {
   const user = React.useContext(UserContext);
   const { signOut } = useContext(AuthContext);
-  const [numSecao, setNumSecao] = useState(0);
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
-  const [produtoSelecionado, setProdutoSelecionado] = useState(null);
-
-  function avancarSecao() {
-    if (numSecao < secoes.length - 1) {
-      setNumSecao(numSecao + 1);
-      console.log('avaniu');
-    }
-  }
-  function voltarSecao() {
-    if (numSecao > 0) {
-      setNumSecao(numSecao - 1);
-    }
-  }
-
-  const montaSecoes = async () => {
-    console.log("teste1" + user.uid)
-    const q = query(collection(db, "usuarios", user.uid), where("produtos", "array-contains",
-      { categoria: "Frutas" }));
-    console.log("testelog2");
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id + ' => ' + doc.data());
-    });
-  }
-
-  const carregarProdutosUsuario = async () => {
-    const q = query(collection(db, "usuarios", user.uid, "produtos"));
-    const querySnapshot = await getDocs(q);
-  
-    const produtosUsuario = [];
-    querySnapshot.forEach((doc) => {
-      produtosUsuario.push(doc.data());
-    });
-    return produtosUsuario;
-  };
 
   return (
-    <VStack flex={1}>
-      {numSecao === 0 && (
-
-          <ScrollView flex={1}>
-            <VStack flex={1} alignItems='center' p={5}>
-              <Titulo>Perfil</Titulo>
-              <HStack flex={1} alignItems='top' p={5}>
-                <Image size='xl' borderRadius='3xl' source={{ uri: user.photoURL }} alt="profile-image" />
-                <VStack flex={1} alignItems='flex-start'>
-                  <Titulo ml={5} color='blue.500'>{user.displayName}</Titulo>
-                  <Titulo fontSize='xs' ml={5} mt={1} color='gray.500'>Atualizar perfil</Titulo>
-                </VStack>
-              </HStack>
-              <Divider mt={5} />
-              <Botao w='50%' h='10%' bg='#E9E8E7' _text={{ color: "black" }} onPress={() => { avancarSecao(); montaSecoes(); }}>Produtos</Botao>
-              <Botao w='50%' h='10%' bg='#E9E8E7' _text={{ color: "black" }}>Notas</Botao>
-              <Botao w='50%' h='10%' bg='#E9E8E7' _text={{ color: "black" }} onPress={signOut}>Log Out</Botao>
-              <Divider mt={5} />
-            </VStack>
-          </ScrollView>
-
-      )}
-      {numSecao === 1 && (
-        <VStack flex={1}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <HStack my={10}>
-              {secoes[numSecao]?.entradaCategoria?.map((entrada) => (
-                <VStack px={2} key={entrada.categoria}>
-                  <Button
-                    p={0}
-                    onPress={() => setCategoriaSelecionada(entrada.categoria)}
-                    bgColor={categoriaSelecionada === entrada.categoria ? "blue.400" : "gray.100"}
-                  >
-                    <Image source={entrada.image} alt="Alternate Text" size="md" />
-                  </Button>
-                  <Titulo fontSize='md' mt={0}>{entrada.categoria}</Titulo>
-                </VStack>
-              ))}
-            </HStack>
-          </ScrollView>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {secoes[numSecao]?.entradaProdutos
-              ?.filter((produto) => !categoriaSelecionada || produto.categoria === categoriaSelecionada)
-              .map((entrada) => {
-                return entrada.tiposProdutos.map((tipoProduto) => {
-                  return (
-                    <Button bgColor='gray.100' onPress={() => { avancarSecao(); setProdutoSelecionado(tipoProduto); }}>
-                      <HStack key={tipoProduto.produto} my={10}>
-                        <Image m={3} size='lg' source={tipoProduto.image} alt="testeimage" />
-                        <VStack alignItems='flex-start' justifyContent='center'>
-                          <Titulo fontSize='lg' mt={0}>{tipoProduto.produto}</Titulo>
-                          <Titulo mt={2} w='100%'>Quantidade: </Titulo>
-                        </VStack>
-                      </HStack>
-                    </Button>
-                  );
-                });
-              })}
-            <VStack alignItems='center'>
-              <Botao
-                mr={8}
-                mb={5}
-                bg='green.500'
-                _text={{ fontSize: '2xl' }}
-                w='60%'
-                onPress={avancarSecao}
-              >
-                Continuar
-              </Botao>
-            </VStack>
-          </ScrollView>
-        </VStack>
-      )}
-      {numSecao === 2 && (
-        <VStack flex={1}>
-          {secoes[numSecao]?.entradaAdicionar?.map(() => {
-            return (
-              <VStack flex={1} alignItems='center' my={10} >
-                <Image borderRadius={100} source={produtoSelecionado.image} alt="Alternate Text" size="xl" />
-                <Titulo color='blue.500'>{produtoSelecionado.produto}</Titulo>
-                <HStack mt={5} alignItems='center' justifyContent='center'>
-                  <Botao bg='gray.200' w='10%' h='60%' _text={{ color: "black" }} m={2} >+</Botao>
-                  <Input mt={7} w='40%' h='60%' placeholder="Quantidade.." bgColor="gray.200" fontSize="lg" />
-                  <Botao bg='gray.200' w='10%' h='60%' _text={{ color: "black" }} m={2}>-</Botao>
-                </HStack>
-                <VStack>
-                  <Botao bg='gray.200' w='100%' h='20%' _text={{ color: "black" }} m={2} onPress={() => voltarSecao()}>Atualizar </Botao>
-                  <Botao bg='gray.200' w='100%' h='20%' _text={{ color: "black" }} m={2} onPress={() => voltarSecao()}>Excluir</Botao>
-                </VStack>
-              </VStack>
-            );
-          })}
-        </VStack>
-      )}
-      <Box mt={5} alignItems="center" p={5} justifyContent="center">
-        {numSecao > 0 && numSecao < 2 && (
-          <Botao onPress={() => voltarSecao()} bgColor="gray.400">
-            Voltar
-          </Botao>
-        )}
-
-      </Box>
-    </VStack>
+    <View style={styles.container}>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Perfil</Text>
+      
+      <View style={styles.profileContainer}>
+        <Image source={{ uri: user.photoURL }} style={styles.profileImage} />
+        <Text style={styles.displayName}>{user.displayName}</Text>
+      </View>
+      
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Produtos')}
+        >
+          <Ionicons name="pricetags" size={24} color="#fff" />
+          <Text style={styles.buttonText}>Produtos</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Notas')}
+        >
+          <Ionicons name="clipboard" size={24} color="#fff" />
+          <Text style={styles.buttonText}>Notas</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.button}
+          onPress={signOut}
+        >
+          <Ionicons name="log-out" size={24} color="#fff" />
+          <Text style={styles.buttonText}>Log Out</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
-}
+};
+
+const ProdutosScreen = () => {
+  const user = useContext(UserContext);
+  const [produtos, setProdutos] = useState([]);
+
+  useEffect(() => {
+    const getProdutos = async () => {
+      try {
+        const produtosRef = collection(db, 'usuarios');
+        const q = query(produtosRef, where('email', '==', user.email));
+        const querySnapshot = await getDocs(q);
+
+        const produtosData = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          produtosData.push(...data.produtos);
+        });
+        setProdutos(produtosData);
+      } catch (error) {
+        console.error('Erro ao obter produtos:', error);
+      }
+    };
+
+    getProdutos();
+  }, [user]);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Meus Produtos</Text>
+      {produtos.length > 0 ? (
+        <FlatList
+        data={produtos}
+        keyExtractor={(item) => item.id} // Certifique-se de que cada item tenha uma propriedade id única
+        renderItem={({ item }) => (
+          <View style={styles.produtoContainer}>
+            <Text>Categoria: {item.categoria}</Text>
+            <Text>Produto: {item.produto}</Text>
+            <Text>Quantidade: {item.quantidade}</Text>
+          </View>
+        )}
+      />
+      ) : (
+        <Text>Nenhum produto cadastrado.</Text>
+      )}
+    </View>
+  );
+};
+
+const NotasScreen = () => (
+  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Text>Notas Screen</Text>
+    {/* Adicione aqui a lógica para mostrar as notas do usuário */}
+  </View>
+);
+
+const PerfilStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Perfil" component={PerfilScreen} />
+    <Stack.Screen name="Produtos" component={ProdutosScreen} />
+    <Stack.Screen name="Notas" component={NotasScreen} />
+  </Stack.Navigator>
+);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 20,
+  },
+  profileContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  displayName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    marginTop: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#4FAF5A',
+    borderRadius: 10,
+    width: '100%',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    marginLeft: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  produtoContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+  },
+});
+
+export default PerfilStack;

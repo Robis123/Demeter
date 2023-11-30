@@ -21,7 +21,6 @@ export default function Perfil() {
           </VStack>
         </HStack>
         <Divider mt={5}/>
-        <Botao w='50%' h='10%' bg='#E9E8E7' _text={{ color: "black" }}>Favoritos</Botao>
         <Botao w='50%' h='10%' bg='#E9E8E7' _text={{ color: "black" }} onPress={signOut}>Log Out</Botao>
         <Divider mt={5}/>
 

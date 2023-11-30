@@ -23,7 +23,6 @@ export default function Cadastro({ navigation }) {
   const [cep, setCep] = useState("");
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
-  const [international, setInternational] = useState("");
   const { signOut } = useContext(AuthContext);
   const [tipoUsuario, setTipoUsuario] = useState("");
  
@@ -199,10 +198,10 @@ export default function Cadastro({ navigation }) {
                     dddMask: '(99)'
                   }}
                   placeholder="Telefone"
-                  value={international}
+                  value={telefone}
                   onSubmitEditing={addProdutor}
                   onChangeText={text => {
-                    setInternational(text);
+                    setTelefone(text);
                   }}
                 />
                 <TextInputMask
