@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Alert } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { db } from "../firebase/firebase.js";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, deleteDoc, getDoc, updateDoc } from "firebase/firestore";
 import { AuthContext } from '../context/authContext';
 import UserContext from "../context/userContext";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -54,43 +55,86 @@ const PerfilScreen = ({ navigation }) => {
 const ProdutosScreen = () => {
   const user = useContext(UserContext);
   const [produtos, setProdutos] = useState([]);
+  const alertRef = React.createRef();
+  const getProdutos = async () => {
+    try {
+      const produtosRef = collection(db, 'usuarios');
+      const q = query(produtosRef, where('email', '==', user.email));
+      const querySnapshot = await getDocs(q);
 
+      const produtosData = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        produtosData.push(...data.produtos);
+      });
+      setProdutos(produtosData);
+    } catch (error) {
+      console.error('Erro ao obter produtos:', error);
+    }
+  };
   useEffect(() => {
-    const getProdutos = async () => {
-      try {
-        const produtosRef = collection(db, 'usuarios');
-        const q = query(produtosRef, where('email', '==', user.email));
-        const querySnapshot = await getDocs(q);
-
-        const produtosData = [];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          produtosData.push(...data.produtos);
-        });
-        setProdutos(produtosData);
-      } catch (error) {
-        console.error('Erro ao obter produtos:', error);
-      }
-    };
 
     getProdutos();
   }, [user]);
+
+  const handleDeleteProduto = async (produtoNome) => {
+    try{
+      const usuariosRef = doc(db, 'usuarios', user.uid);
+      const usuarioDoc = await getDoc(usuariosRef);
+      if (usuarioDoc.exists()) {
+        const usuarioData = usuarioDoc.data();
+        const produtoIndex = usuarioData.produtos.findIndex(produto => produto.produto === produtoNome);
+        if (produtoIndex > -1) {
+          // Remove o produto do array
+          usuarioData.produtos.splice(produtoIndex, 1);
+          // Atualiza o documento do usuário
+          await updateDoc(usuariosRef, { produtos: usuarioData.produtos });
+          // Recarrega os produtos
+          getProdutos();
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao excluir produto:', error);
+    }
+  };
+  
+  
+
+  const confirmDelete = (produtoId) => {
+    Alert.alert(
+      'Confirmar exclusão', 
+      'Tem certeza de que deseja excluir este produto?',
+      [
+        {text: 'Cancelar', style: 'cancel'},
+        {text: 'Excluir', onPress: () => handleDeleteProduto(produtoId)},
+      ],
+      {cancelable: false}
+    );
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={styles.produtoContainer}>
+      <View style={styles.textContainer}>
+        <Text>Categoria: {item.categoria}</Text>
+        <Text>Produto: {item.produto}</Text>
+        <Text>Quantidade: {item.quantidade}</Text>
+      </View>
+      <TouchableOpacity onPress={() => confirmDelete(item.produto)} style={styles.deleteButton}>
+        <Ionicons name="trash-bin-outline" size={20} color="#4FAF5A" />
+      </TouchableOpacity>
+    </View>
+  );
+  
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Meus Produtos</Text>
       {produtos.length > 0 ? (
         <FlatList
-        data={produtos}
-        keyExtractor={(item) => item.id} // Certifique-se de que cada item tenha uma propriedade id única
-        renderItem={({ item }) => (
-          <View style={styles.produtoContainer}>
-            <Text>Categoria: {item.categoria}</Text>
-            <Text>Produto: {item.produto}</Text>
-            <Text>Quantidade: {item.quantidade}</Text>
-          </View>
-        )}
-      />
+          data={produtos}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+        />
       ) : (
         <Text>Nenhum produto cadastrado.</Text>
       )}
@@ -164,6 +208,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  lixeiraIcon: {
+    marginLeft: 10,
+  },
+  textContainer: {
+    margin: 10,
+  },
+  deleteButton: {
+    marginLeft: 10,
   },
 });
 

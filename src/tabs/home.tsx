@@ -119,7 +119,7 @@ export default function Cadastro() {
             {secoes[numSecao]?.entradaCategoria?.map((entrada) => {
               return (
                 <VStack >
-                  <Button p={0} mx={3} my={0} borderRadius={100} onPress={() => {avancarSecao(); setCategoriaSelecionada(entrada.categoria);}} bgColor="blue.400">
+                  <Button p={0} mx={3} my={0} borderRadius={100} onPress={() => {avancarSecao(); setCategoriaSelecionada(entrada.categoria);}} bgColor="gray.300">
                     <Image borderRadius={100}  source={
                       entrada.image} alt="Alternate Text" size="xl" />
                   </Button>
@@ -135,7 +135,7 @@ export default function Cadastro() {
                   {entrada.tiposProdutos.map((tipoProduto) => {
                     return (
                       <VStack alignItems='center'>
-                        <Button p={0} mx={3} my={0} borderRadius={100} onPress={() => {avancarSecao(); setProdutoSelecionado(tipoProduto);}} bgColor="blue.400">
+                        <Button p={0} mx={3} my={0} borderRadius={100} onPress={() => {avancarSecao(); setProdutoSelecionado(tipoProduto);}} bgColor="gray.100">
                           <Image borderRadius={100}  source={tipoProduto.image} alt="Alternate Text" size="xl" />
                         </Button>
                         <Titulo mb={10} mt={0}>{tipoProduto.produto}</Titulo>
