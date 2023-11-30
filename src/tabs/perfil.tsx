@@ -8,15 +8,9 @@ import { AuthContext } from '../context/authContext';
 import UserContext from "../context/userContext";
 import img from '../assets/Morango.png';
 
-
 const Stack = createNativeStackNavigator();
 
 const PerfilScreen = ({ navigation }) => {
-  type ImageSourcePropType = ImageURISource | ImageURISource[] | ImageRequireSource;
-  interface ImageURISource {
-   
-    uri?: string | undefined;
-  }
   const user = React.useContext(UserContext);
   const { signOut } = useContext(AuthContext);
 

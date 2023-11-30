@@ -5,25 +5,101 @@ import { AuthContext } from '../context/authContext';
 import UserContext from '../context/userContext';
 import { collection, getDocs, query, where, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase.js";
+import NFSE from '../utils/api';
+import { getUrlPdf } from '../utils/pablo';
+
+
 
 const NotasScreen = () => {
   const user = useContext(UserContext);
   const [valor, setValor] = useState('');
   const [produtos, setProdutos] = useState([]);
+  const [quantidadeAtual, setQuantidadeAtual] = useState(0);
+  const [valorAtual, setValorAtual] = useState(0);
+  const [totaisProdutos, setTotaisProdutos] = useState([]);
+  const [totalSecao, setTotalSecao] = useState(0);
+  const [produtosSelecionados, setProdutosSelecionados] = useState([]);
+
+
+
+
 
   // Função para adicionar um produto à lista
-  const adicionarProduto = () => {
-    // Adicione a lógica para adicionar o produto à lista
-    // Você pode usar setProdutos([...produtos, { categoria: '', produto: '', quantidade: '', valor }]);
-    // Certifique-se de validar os campos antes de adicionar
-    console.log('produto adicionado')
+  const adicionarProduto = (produto) => {
+    const produtoExistenteIndex = produtosSelecionados.findIndex(
+      (p) => p.produto === produto.produto
+    );
+  
+    const novoTotalProduto = produto.quantidade * produto.valor;
+  
+    let novoTotal = totalSecao;
+  
+    if (produtoExistenteIndex !== -1) {
+      // Produto já existe, apenas atualize a quantidade
+      const novosProdutosSelecionados = [...produtosSelecionados];
+      novosProdutosSelecionados[produtoExistenteIndex] = {
+        ...novosProdutosSelecionados[produtoExistenteIndex],
+        quantidade: produto.quantidade,
+        valor: produto.valor,
+      };
+      setProdutosSelecionados(novosProdutosSelecionados);
+    } else {
+      // Novo produto, adicione ao array
+      setProdutosSelecionados([...produtosSelecionados, produto]);
+      novoTotal += novoTotalProduto;
+    }
+  
+    console.log('Valor total', novoTotal);
+    setTotalSecao(novoTotal);
   };
+  
+  // Mova a adição de totalProduto para fora da função adicionarProduto
+  useEffect(() => {
+    const totalProduto = produtosSelecionados.reduce(
+      (total, produto) => total + produto.quantidade * produto.valor,
+      0
+    );
+    setTotaisProdutos([...totaisProdutos, totalProduto]);
+    // console.log(produtosSelecionados)
+  }, [produtosSelecionados]);
 
   // Função para emitir a nota fiscal (vamos implementar posteriormente)
-  const emitirNotaFiscal = () => {
+  const emitirNotaFiscal = async () => {
     // Adicione a lógica para emitir a nota fiscal
     // Por enquanto, podemos apenas exibir um log
-    console.log('Nota Fiscal emitida:', { valor, produtos });
+    try {
+      const produtosRef = collection(db, 'usuarios');
+      const q = query(produtosRef, where('email', '==', user.email));
+      const querySnapshot = await getDocs(q);
+      
+      const produtosData = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+
+        //const concatenatedData = Object.values(data).join(' ');
+        // console.log('>>>'+getUrlPdf((NFSE(data.inscricaoEstadual,'Inscrição Estadual ST', data.cnpj, data.nome, data.bairroDistrito, data.cep, '30/11/2023', data.endereco, data.cidade, data.uf, '11111111',100,'caixa', data.telefone,145.50, JSON.stringify(data.produtos)))))
+        // console.log('>>>', NFSE(data.inscricaoEstadual,'Inscrição Estadual ST', data.cnpj, data.nome, data.bairroDistrito, data.cep, '30/11/2023', data.endereco, data.cidade, data.uf, '11111111',100,'caixa', data.telefone,145.50, JSON.stringify(data.produtos)));
+        NFSE(data.inscricaoEstadual,'Inscrição Estadual ST', data.cnpj, data.nome, data.bairroDistrito, data.cep, '30/11/2023', data.endereco, data.cidade, data.uf, '11111111',100,'caixa', data.telefone,145.50, JSON.stringify(data.produtos))
+          .then(async result => {
+            const url = await getUrlPdf(result);
+            console.log('Func getUrlPdf: ', url);
+          })
+          .catch(async error => {
+            console.error('Error:', error);
+          });
+      });
+      setProdutos(produtosData);
+      setProdutosSelecionados([]);
+      setTotaisProdutos([]);
+      setTotalSecao(0);
+
+      // console.log('Produtos após a emissão da nota fiscal:', produtosData);
+
+    } catch (error) {
+      console.error('Erro ao obter produtos:', error);
+    }
+
+    // console.log('Nota Fiscal emitida:', { valor, produtos });
   };
 
   // Função para obter os produtos do usuário
@@ -48,10 +124,12 @@ const NotasScreen = () => {
     getProdutos();
   }, [user]);
 
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Minha Nota Fiscal</Text>
-      <Text style={styles.subtitle}>Informe a quantidade e valor do produto que deseja adicionar a nota fiscal:</Text>
+      <Text style={styles.subtitle}>Informe a quantidade e valor do produto que deseja adicionar à nota fiscal:</Text>
 
       {/* Lista de produtos */}
       <FlatList
@@ -60,8 +138,8 @@ const NotasScreen = () => {
         renderItem={({ item }) => (
           <View style={styles.produtoContainer}>
             <View style={styles.textContainer}>
+              <Text>{item.produto}</Text>
               <Text>Categoria: {item.categoria}</Text>
-              <Text>Produto: {item.produto}</Text>
               <Text>Quantidade: {item.quantidade}</Text>
             </View>
             <View style={styles.textContainer}>
@@ -69,19 +147,32 @@ const NotasScreen = () => {
                 style={styles.input}
                 placeholder="Valor"
                 keyboardType="numeric"
-                value={valor}
-                onChangeText={(text) => setValor(text)}
+                value={valorAtual.toString()}
+                onChange={(event) => {
+                  const text = event.nativeEvent.text;
+                  setValorAtual(text ? parseInt(text, 10) : 0);
+                }}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Quantidade"
                 keyboardType="numeric"
-                value={valor}
-                onChangeText={(text) => setValor(text)}
+                value={quantidadeAtual.toString()}
+                onChange={(event) => {
+                  const text = event.nativeEvent.text;
+                  setQuantidadeAtual(text ? parseInt(text, 10) : 0);
+                }}
               />
 
               {/* Botão de adição de produto */}
-              <TouchableOpacity style={styles.addButton} onPress={adicionarProduto}>
+              <TouchableOpacity style={styles.addButton} onPress={() => {
+                const produto = {
+                  produto: item.produto,
+                  quantidade: quantidadeAtual,
+                  valor: valorAtual,
+                };
+                adicionarProduto(produto);
+              }}>
                 <Ionicons name="add" size={20} color="#fff" />
                 <Text style={styles.buttonText}>Adicionar Produto</Text>
               </TouchableOpacity>
@@ -103,6 +194,7 @@ const NotasScreen = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

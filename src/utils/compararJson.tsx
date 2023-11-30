@@ -21,5 +21,4 @@ function compararJsons(json1, json2) {
   const json2 = [{"nome": "uva", "qtd": 10, "vlrunit": 5}, {"nome": "maça", "qtd": 11, "vlrunit": 5}];
   
   const resultado = compararJsons(json1, json2);
-  console.log(resultado);
   
