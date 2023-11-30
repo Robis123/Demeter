@@ -8,7 +8,7 @@ import Prod1 from '../assets/prod1.png';
 import Prod2 from '../assets/prod2.png';
 import Prod3 from '../assets/prod3.png';
 import Prod4 from '../assets/prod4.png';
-
+import Prod5 from '../assets/prod5.png';
 
 const secoes = [
   {
@@ -175,6 +175,47 @@ const secoes = [
         produtor: 'Lino Limeira',
         localizacao: 'Nenelândia - Ceará',
         Image: Prod4,
+        categoria: 'Frutas',
+        tiposProdutos: [
+          {
+            id: 1,
+            produto: 'Banana',
+            image: Image1
+          },
+          {
+            id: 2,
+            produto: 'Maça',
+            image: Image2
+          },
+          {
+            id: 3,
+            produto: 'Uva',
+            image: Image3
+          },
+          {
+            id: 4,
+            produto: 'Melancia',
+            image: Image4
+          },
+          {
+            id: 5,
+            produto: 'Teste',
+            image: Image5
+          },
+          {
+            id: 6,
+            produto: 'Pera',
+            image: Image6
+          },
+        ]
+
+      },
+
+      {
+        id: 4,
+        produtor: 'Artur Alcantra',
+        localizacao: 'Xique Xique - Bahia',
+        Image: Prod5,
         categoria: 'Frutas',
         tiposProdutos: [
           {
