@@ -101,7 +101,7 @@ const secoes = [
           },
           {
             id: 3,
-            produto: 'Alcega',
+            produto: 'Acelga',
             image: Image3
           },
           {
@@ -111,7 +111,7 @@ const secoes = [
           },
           {
             id: 5,
-            produto: 'Brócoli',
+            produto: 'Brócolis',
             image: Image5
           },
         ]

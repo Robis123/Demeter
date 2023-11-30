@@ -1,12 +1,13 @@
 import { Box, ScrollView, HStack, Button, Image, VStack, Input, Flex } from "native-base";
 import { Titulo } from "../components/titulo";
 import { Botao } from "../components/botao";
-import { doc, setDoc, arrayUnion } from "firebase/firestore";
+import { doc, setDoc, arrayUnion, getDoc, query, getDocs, where, collection } from "firebase/firestore";
 import { db } from "../firebase/firebase.js";
 import React, { useState, useContext } from "react";
 import { secoes } from "../utils/homeSecoes";
 import UserContext from "../context/userContext";
 import { produtoSalvo, Toast} from "../utils/alerts";
+
 
 
 
@@ -19,12 +20,81 @@ export default function Cadastro() {
   const [quantidade, setQuantidade] = useState("");
 
   const attProduto = async (categoria, produto, quantidade) => {
+    const img = [
+      {
+        "banana": "../assets/Banana.png",
+        "maca": "../assets/Maça.png",
+        "pera": "../assets/Pera.png",
+        "soja": "../assets/Soja.png",
+        "trigo": "../assets/Trigo.png",
+        "uva": "../assets/Uva.png",
+        "morango": "../assets/Morango.png",
+        "milho": "../assets/Milho.png",
+        "Mamão": "../assets/Mamão.png",
+        "lentilha": "../assets/Lentilha.png",
+        "leguminosas": "../assets/Leguminosas.png",
+        "hortaliças": "../assets/Hortaliças.png",
+        "Grão de bico": "../assets/Grão de Bico.png",
+        "feijao": "../assets/Feijão.png",
+        "espinafre": "../assets/Espinafre.png",
+        "ervilha": "../assets/Ervilha.png",
+        "couve": "../assets/Couve.png",
+        "cevada": "../assets/Cevada.png",
+        "cereais": "../assets/Cereais.png",
+        "centeio": "../assets/Centeio.png",
+        "Brócolis": "../assets/Brócolis.png",
+        "aveia": "../assets/Aveia.png",
+        "arroz": "../assets/Arroz.png",
+        "amendoim": "../assets/Amendoim.png",
+        "alface": "../assets/Alface.png",
+        "adubo": "../assets/Adubo.png",
+        "adubo organomineral": "../assets/Adubo Organomineral.png",
+        "Adubo orgânico": "../assets/Adubo Organico.png",
+        "adubo mineral": "../assets/Adubo Mineral.png",
+        "acelga": "../assets/Acelga.png",
+        "Muda 1": "../assets/Muda 1.png",
+        "Muda 2": "../assets/Muda 2.png",
+        "Muda 3": "../assets/Muda 3.png"
+      }
+    ]
+
+    // Variável que você pass
+
+  // Inicializa uma variável para armazenar o caminho da imagem
+  let caminhoDaImagem = null;
+
+  // Percorre o array de objetos
+  for (let i = 0; i < img.length; i++) {
+    // Verifica se a chave existe no objeto atual
+    if (img[i].hasOwnProperty(produto.toLowerCase())) {
+      // Se a chave for encontrada, atribui o valor correspondente à variável
+      caminhoDaImagem = img[i][produto.toLowerCase()];
+      // Pode interromper o loop, pois já encontrou a correspondência
+      break;
+    }
+  }
+    
     try {
+      let booleano = true;
       const userRef = doc(db, 'usuarios', user.uid);
-      await setDoc(userRef, { produtos: arrayUnion({categoria, produto, quantidade}) }, { merge: true });
-      console.log("Produto adicionado com sucesso");
+      const produtosRef = collection(db, 'usuarios');
+      const q = query(produtosRef, where('email', '==', user.email));
+      const querySnapshot2 = await getDocs(q);
+      const primeiroDoc = querySnapshot2.docs[0];
+      const data = primeiroDoc.data();
+      const listaProdutos = data.produtos;
+      listaProdutos.forEach(produtoArray => {
+        if (produtoArray.produto == produto) {
+          throw new Error("Produto já existente");
+        }
+        
+      });
+      await setDoc(userRef, { produtos: arrayUnion({categoria, produto, quantidade, caminhoDaImagem}) }, { merge: true });
+      booleano = true;
+      produtoSalvo(booleano);
     } catch (e) {
-      console.error("Erro ao adicionar produto: ", e);
+      const booleano2 = false;
+      produtoSalvo(booleano2);
     }
   };
 
@@ -87,7 +157,7 @@ export default function Cadastro() {
                   <Input keyboardType="numeric"  mt={5} w='90%' h='60%' placeholder="Quantidade.." bgColor="gray.200" fontSize="lg" value={quantidade} onChangeText={setQuantidade}/>
                 </HStack>
                 <VStack>
-                  <Button _text={{ fontSize: '3xl' }} m={4} p={5} bg='green.500' onPress={() => {produtoSalvo();setNumSecao(numSecao - 2); attProduto( categoriaSelecionada, produtoSelecionado.produto, quantidade );}} >
+                  <Button _text={{ fontSize: '3xl' }} m={4} p={5} bg='green.500' onPress={() => {setNumSecao(numSecao - 2); attProduto( categoriaSelecionada, produtoSelecionado.produto, quantidade );}} >
                     Salvar 
                   </Button>
                   <Button _text={{ fontSize: '3xl' }} m={3} p={5} bg='gray.500' onPress={() => {setNumSecao(numSecao - 2);}} >
