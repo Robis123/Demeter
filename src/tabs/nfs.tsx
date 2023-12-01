@@ -7,10 +7,12 @@ import { collection, getDocs, query, where, doc, getDoc, updateDoc } from "fireb
 import { db } from "../firebase/firebase.js";
 import NFSE from '../utils/api';
 import { getUrlPdf } from '../utils/pablo';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
+const Stack = createNativeStackNavigator();
 
-const NotasScreen = () => {
+const NotasScreen = ({ navigation }) => {
   const user = useContext(UserContext);
   const [valor, setValor] = useState('');
   const [produtos, setProdutos] = useState([]);
@@ -19,21 +21,19 @@ const NotasScreen = () => {
   const [totaisProdutos, setTotaisProdutos] = useState([]);
   const [totalSecao, setTotalSecao] = useState(0);
   const [produtosSelecionados, setProdutosSelecionados] = useState([]);
-
-
-
-
+  
+  
 
   // Função para adicionar um produto à lista
   const adicionarProduto = (produto) => {
     const produtoExistenteIndex = produtosSelecionados.findIndex(
       (p) => p.produto === produto.produto
     );
-  
+
     const novoTotalProduto = produto.quantidade * produto.valor;
-  
+
     let novoTotal = totalSecao;
-  
+
     if (produtoExistenteIndex !== -1) {
       // Produto já existe, apenas atualize a quantidade
       const novosProdutosSelecionados = [...produtosSelecionados];
@@ -43,16 +43,17 @@ const NotasScreen = () => {
         valor: produto.valor,
       };
       setProdutosSelecionados(novosProdutosSelecionados);
+      //botão cinza
     } else {
       // Novo produto, adicione ao array
       setProdutosSelecionados([...produtosSelecionados, produto]);
       novoTotal += novoTotalProduto;
     }
-  
+
     console.log('Valor total', novoTotal);
     setTotalSecao(novoTotal);
   };
-  
+
   // Mova a adição de totalProduto para fora da função adicionarProduto
   useEffect(() => {
     const totalProduto = produtosSelecionados.reduce(
@@ -60,46 +61,53 @@ const NotasScreen = () => {
       0
     );
     setTotaisProdutos([...totaisProdutos, totalProduto]);
-    // console.log(produtosSelecionados)
+    console.log(produtosSelecionados)
   }, [produtosSelecionados]);
 
-  // Função para emitir a nota fiscal (vamos implementar posteriormente)
+  // Função para emitir a nota fiscal
   const emitirNotaFiscal = async () => {
-    // Adicione a lógica para emitir a nota fiscal
-    // Por enquanto, podemos apenas exibir um log
     try {
       const produtosRef = collection(db, 'usuarios');
       const q = query(produtosRef, where('email', '==', user.email));
       const querySnapshot = await getDocs(q);
-      
-      const produtosData = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
 
-        //const concatenatedData = Object.values(data).join(' ');
-        // console.log('>>>'+getUrlPdf((NFSE(data.inscricaoEstadual,'Inscrição Estadual ST', data.cnpj, data.nome, data.bairroDistrito, data.cep, '30/11/2023', data.endereco, data.cidade, data.uf, '11111111',100,'caixa', data.telefone,145.50, JSON.stringify(data.produtos)))))
-        // console.log('>>>', NFSE(data.inscricaoEstadual,'Inscrição Estadual ST', data.cnpj, data.nome, data.bairroDistrito, data.cep, '30/11/2023', data.endereco, data.cidade, data.uf, '11111111',100,'caixa', data.telefone,145.50, JSON.stringify(data.produtos)));
-        NFSE(data.inscricaoEstadual,'Inscrição Estadual ST', data.cnpj, data.nome, data.bairroDistrito, data.cep, '30/11/2023', data.endereco, data.cidade, data.uf, '11111111',100,'caixa', data.telefone,145.50, JSON.stringify(data.produtos))
-          .then(async result => {
+      querySnapshot.forEach(async (doc) => {
+        const data = doc.data();
+        NFSE(
+          data.inscricaoEstadual,
+          'Inscrição Estadual ST',
+          data.cnpj,
+          data.nome,
+          data.bairroDistrito,
+          data.cep,
+          '30/11/2023',
+          data.endereco,
+          data.cidade,
+          data.uf,
+          '11111111',
+          100,
+          'caixa',
+          data.telefone,
+          145.50,
+          JSON.stringify(data.produtos)
+        )
+          .then(async (result) => {
             const url = await getUrlPdf(result);
             console.log('Func getUrlPdf: ', url);
           })
-          .catch(async error => {
+          .catch(async (error) => {
             console.error('Error:', error);
           });
       });
-      setProdutos(produtosData);
+
+      setProdutos([]);
       setProdutosSelecionados([]);
       setTotaisProdutos([]);
       setTotalSecao(0);
 
-      // console.log('Produtos após a emissão da nota fiscal:', produtosData);
-
     } catch (error) {
       console.error('Erro ao obter produtos:', error);
     }
-
-    // console.log('Nota Fiscal emitida:', { valor, produtos });
   };
 
   // Função para obter os produtos do usuário
@@ -123,8 +131,6 @@ const NotasScreen = () => {
   useEffect(() => {
     getProdutos();
   }, [user]);
-
-
 
   return (
     <View style={styles.container}>
@@ -185,16 +191,31 @@ const NotasScreen = () => {
         )}
       />
 
-      {/* Campo de entrada para o valor */}
-
       {/* Botão para emitir a nota fiscal */}
-      <TouchableOpacity style={styles.emitirButton} onPress={emitirNotaFiscal}>
+      <TouchableOpacity style={styles.emitirButton} onPress={() => {
+  emitirNotaFiscal(); // Adicione os parênteses aqui para chamar a função
+  navigation.navigate('ProdutosNotas');
+  getProdutos();
+}}>
         <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
+const ProdutosNotasScreen = () => (
+  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Text>ProdutosNotasScreen</Text>
+    {/* Conteúdo da tela de ProdutosNotas */}
+  </View>
+);
+
+const NotasStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Notas" component={NotasScreen} />
+    <Stack.Screen name="ProdutosNotas" component={ProdutosNotasScreen} />
+  </Stack.Navigator>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -260,4 +281,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotasScreen;
+export default NotasStack;
