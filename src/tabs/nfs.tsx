@@ -106,7 +106,7 @@ const NotasScreen = ({ navigation }) => {
             // setPathReady(true);
             //handleCopyPress(url);
             var json = { testeurl: url };
-            Robson(json);
+            return Robson(json);
           })
           .catch(async (error) => {
             console.error('Error:', error);
@@ -213,23 +213,33 @@ const NotasScreen = ({ navigation }) => {
   );
 };
 
-var Robson = (url) => {
+const Robson = (url) => {
   var urlDesejada = url.testeurl;
-  console.log('urldesejada:' + urlDesejada)
+
+  const handleDownloadPress = async (urlDesejada) => {
+    await Linking.openURL(urlDesejada);
+  };
+
+  const handleCopyPress = async (urlDesejada) => {
+    Clipboard.setString(urlDesejada);
+    alert('Link copiado para a área de transferência!');
+  };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <TouchableOpacity style={styles.urlButton} onPress={async () => Linking.openURL(urlDesejada)}>
+      <TouchableOpacity style={styles.urlButton} onPress={handleDownloadPress}>
         <Ionicons name="download" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Download</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.urlButton} onPress={async () => Clipboard.setString(urlDesejada)}>
+      <TouchableOpacity style={styles.urlButton} onPress={handleCopyPress}>
         <Ionicons name="copy" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Copiar link</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
+
 
 // const Robson = ({ path }) => {
 //   console.log(typeof(path));
