@@ -171,7 +171,7 @@ export default function Cadastro({ navigation }) {
                   options={{
                     mask: '*******************'
                   }}
-                  placeholder="Razão Social"
+                  placeholder="Razão Social ou Nome"
                   value={nome}
                   onChangeText={(text) => {
                     // Limita o texto a 50 caracteres

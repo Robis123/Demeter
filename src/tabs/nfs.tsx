@@ -151,6 +151,7 @@ const NotasScreen = ({ navigation }) => {
       {/* Lista de produtos */}
       <FlatList
         data={produtos}
+        showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={{ flex: 1, alignItems: 'center', margin: 20 }}>

@@ -47,7 +47,7 @@ const PerfilScreen = ({ navigation }) => {
           style={styles.button}
           onPress={() => navigation.navigate('Dados')}
         >
-          <Ionicons name="pricetags" size={24} color="#fff" />
+          <Ionicons name="pencil" size={24} color="#fff" />
           <Text style={styles.buttonText}>Alterar Dados</Text>
         </TouchableOpacity>
         
@@ -146,6 +146,7 @@ const ProdutosScreen = () => {
           data={produtos}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
         />
       ) : (
         <Text>Nenhum produto cadastrado.</Text>
@@ -274,7 +275,7 @@ const DadosScreen = ({navigation}) => {
                   options={{
                     mask: '*******************'
                   }}
-                  placeholder="Razão Social"
+                  placeholder="Razão Social ou Nome"
                   value={nome}
                   onChangeText={(text) => {
                     // Limita o texto a 50 caracteres
