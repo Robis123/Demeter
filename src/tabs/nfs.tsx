@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, Clipboard, StyleSheet, TextInput, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { AuthContext } from '../context/authContext';
 import UserContext from '../context/userContext';
@@ -21,8 +21,9 @@ const NotasScreen = ({ navigation }) => {
   const [totaisProdutos, setTotaisProdutos] = useState([]);
   const [totalSecao, setTotalSecao] = useState(0);
   const [produtosSelecionados, setProdutosSelecionados] = useState([]);
-  
-  
+  const [path, setPath] = useState('');
+
+
 
   // Função para adicionar um produto à lista
   const adicionarProduto = (produto) => {
@@ -56,7 +57,7 @@ const NotasScreen = ({ navigation }) => {
 
   // Mova a adição de totalProduto para fora da função adicionarProduto
   useEffect(() => {
-    const totalProduto = produtosSelecionados.reduce(
+    var totalProduto = produtosSelecionados.reduce(
       (total, produto) => total + produto.quantidade * produto.valor,
       0
     );
@@ -64,15 +65,21 @@ const NotasScreen = ({ navigation }) => {
     console.log(produtosSelecionados)
   }, [produtosSelecionados]);
 
+  var MyComponent = () => {
+    // Defina um estado para armazenar o valor do sessionStorage
+    const [storedData, setStoredData] = useState('');
+  }
   // Função para emitir a nota fiscal
-  const emitirNotaFiscal = async () => {
+
+  var [pathReady, setPathReady] = useState(false);
+  var emitirNotaFiscal = async () => {
     try {
-      const produtosRef = collection(db, 'usuarios');
-      const q = query(produtosRef, where('email', '==', user.email));
-      const querySnapshot = await getDocs(q);
+      var produtosRef = collection(db, 'usuarios');
+      var q = query(produtosRef, where('email', '==', user.email));
+      var querySnapshot = await getDocs(q);
 
       querySnapshot.forEach(async (doc) => {
-        const data = doc.data();
+        var data = doc.data();
         NFSE(
           data.inscricaoEstadual,
           'Inscrição Estadual ST',
@@ -92,8 +99,14 @@ const NotasScreen = ({ navigation }) => {
           JSON.stringify(data.produtos)
         )
           .then(async (result) => {
-            const url = await getUrlPdf(result);
-            console.log('Func getUrlPdf: ', url);
+            var url = await getUrlPdf(result);
+
+            // console.log(url);
+            // setPath(url);
+            // setPathReady(true);
+            //handleCopyPress(url);
+            var json = { testeurl: url };
+            Robson(json);
           })
           .catch(async (error) => {
             console.error('Error:', error);
@@ -109,7 +122,9 @@ const NotasScreen = ({ navigation }) => {
       console.error('Erro ao obter produtos:', error);
     }
   };
-
+  useEffect(() => {
+    getProdutos();
+  }, [user]);
   // Função para obter os produtos do usuário
   const getProdutos = async () => {
     try {
@@ -128,10 +143,6 @@ const NotasScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    getProdutos();
-  }, [user]);
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Minha Nota Fiscal</Text>
@@ -142,50 +153,49 @@ const NotasScreen = ({ navigation }) => {
         data={produtos}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.produtoContainer}>
-            <View style={styles.textContainer}>
-              <Text>{item.produto}</Text>
-              <Text>Categoria: {item.categoria}</Text>
-              <Text>Quantidade: {item.quantidade}</Text>
-            </View>
-            <View style={styles.textContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Valor"
-                keyboardType="numeric"
-                value={valorAtual.toString()}
-                onChange={(event) => {
-                  const text = event.nativeEvent.text;
-                  setValorAtual(text ? parseInt(text, 10) : 0);
-                }}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Quantidade"
-                keyboardType="numeric"
-                value={quantidadeAtual.toString()}
-                onChange={(event) => {
-                  const text = event.nativeEvent.text;
-                  setQuantidadeAtual(text ? parseInt(text, 10) : 0);
-                }}
-              />
-
+          <View style={{ flex: 1, alignItems: 'center', margin: 20 }}>
+            <View style={styles.produtoContainer}>
+              <View style={styles.textContainer}>
+                <Text style={styles.itemText}>{item.produto}</Text>
+                <Text style={styles.itemText}>Categoria: {item.categoria}</Text>
+                <Text style={styles.itemText}>Quantidade: {item.quantidade}</Text>
+              </View>
+              <View style={[styles.textContainer, { alignSelf: 'flex-end' }]}>
+                <Text style={styles.label}>Valor(R$)</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Valor"
+                  keyboardType="numeric"
+                  value={valorAtual.toString()}
+                  onChange={(event) => {
+                    const text = event.nativeEvent.text;
+                    setValorAtual(text ? parseInt(text, 10) : 0);
+                  }}
+                />
+                <Text style={styles.label}>Quantidade</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Quantidade"
+                  keyboardType="numeric"
+                  value={quantidadeAtual.toString()}
+                  onChange={(event) => {
+                    const text = event.nativeEvent.text;
+                    setQuantidadeAtual(text ? parseInt(text, 10) : 0);
+                  }}
+                />
+              </View>
               {/* Botão de adição de produto */}
-              <TouchableOpacity style={styles.addButton} onPress={() => {
-                const produto = {
-                  produto: item.produto,
-                  quantidade: quantidadeAtual,
-                  valor: valorAtual,
-                };
-                adicionarProduto(produto);
-              }}>
-                <Ionicons name="add" size={20} color="#fff" />
-                <Text style={styles.buttonText}>Adicionar Produto</Text>
-              </TouchableOpacity>
             </View>
-            {/* Ícone de exclusão (vamos alterar a função depois) */}
-            <TouchableOpacity style={styles.deleteButton}>
-              <Ionicons name="add" size={20} color="#4FAF5A" />
+            <TouchableOpacity style={styles.addButton} onPress={() => {
+              const produto = {
+                produto: item.produto,
+                quantidade: quantidadeAtual,
+                valor: valorAtual,
+              };
+              adicionarProduto(produto);
+            }}>
+              <Ionicons name="add" size={24} color="#fff" />
+              <Text style={styles.buttonText}>Adicionar Produto</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -193,27 +203,91 @@ const NotasScreen = ({ navigation }) => {
 
       {/* Botão para emitir a nota fiscal */}
       <TouchableOpacity style={styles.emitirButton} onPress={() => {
-  emitirNotaFiscal(); // Adicione os parênteses aqui para chamar a função
-  navigation.navigate('ProdutosNotas');
-  getProdutos();
-}}>
+        emitirNotaFiscal(); // Adicione os parênteses aqui para chamar a função
+        navigation.navigate('ProdutosNotas');
+        getProdutos();
+      }}>
         <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-const ProdutosNotasScreen = () => (
-  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    <Text>ProdutosNotasScreen</Text>
-    {/* Conteúdo da tela de ProdutosNotas */}
-  </View>
-);
+var Robson = (url) => {
+  var urlDesejada = url.testeurl;
+  console.log('urldesejada:' + urlDesejada)
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <TouchableOpacity style={styles.urlButton} onPress={async () => Linking.openURL(urlDesejada)}>
+        <Ionicons name="download" size={30} color="#fff" />
+        <Text style={styles.urlbuttonText}>Download</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.urlButton} onPress={async () => Clipboard.setString(urlDesejada)}>
+        <Ionicons name="copy" size={30} color="#fff" />
+        <Text style={styles.urlbuttonText}>Copiar link</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+// const Robson = ({ path }) => {
+//   console.log(typeof(path));
+//   console.log('ROBSON PATH:', path)
+//   return (
+//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+//       <TouchableOpacity
+//         style={styles.addButton}
+//         onPress={() => handleDownloadPress(path)}
+//       >
+//         <Ionicons name="download" size={20} color="#fff" />
+//         <Text style={styles.buttonText}>Download</Text>
+//       </TouchableOpacity>
+//       <TouchableOpacity
+//         style={styles.addButton}
+//         onPress={() => handleCopyPress(path)}
+//       >
+//         <Ionicons name="copy" size={20} color="#fff" />
+//         <Text style={styles.buttonText}>Copiar link</Text>
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
+
+const handleDownloadPress = (path: string) => {
+  // Abra o link no navegador padrão
+  console.log(path)
+  Linking.openURL(path);
+};
+
+const handleCopyPress = (path) => {
+  try {
+    console.log('jsonteorico:: ' + path)
+    console.log('CopyLink:', path)
+    Clipboard.setString(path);
+    alert('Link copiado para a área de transferência!');
+  } catch (error) {
+    console.error('Erro ao copiar o link para a área de transferência:', error);
+  }
+};
+
+// const handleCopyPress = (path: string) => {
+//   const pathString = typeof path === 'string' ? path : JSON.stringify(path);
+//   try {
+//     // Copie o link para a área de transferência
+//     //MODIFIQUEI AQUI: com use context
+//     console.log('CopyLink:', pathString)
+//     Clipboard.setString(pathString);
+//     alert('Link copiado para a área de transferência!');
+//   } catch (error) {
+//     console.error('Erro ao copiar o link para a área de transferência:', error);
+//   }
+// };
 
 const NotasStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Notas" component={NotasScreen} />
-    <Stack.Screen name="ProdutosNotas" component={ProdutosNotasScreen} />
+    <Stack.Screen name="Notas" component={NotasScreen} options={{ headerTransparent: true, headerTitle: '' }} />
+    <Stack.Screen name="ProdutosNotas" component={Robson} options={{ headerTransparent: true, headerTitle: '' }} />
   </Stack.Navigator>
 );
 
@@ -230,7 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#808080',
@@ -240,9 +314,11 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     padding: 10,
+    width: '90%',
     marginBottom: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   textContainer: {
     margin: 10,
@@ -268,17 +344,41 @@ const styles = StyleSheet.create({
     width: '80%',
     justifyContent: 'center',
   },
-  emitirButton: {
+  urlButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    padding: 40,
     backgroundColor: '#4FAF5A',
     borderRadius: 10,
-    padding: 10,
+    width: '80%',
+    justifyContent: 'center',
+  },
+  emitirButton: {
+    backgroundColor: '#1c7a27',
+    borderRadius: 10,
+    padding: 20,
     width: '80%',
     alignItems: 'center',
+    margin: 10,
   },
   buttonText: {
     color: '#fff',
     marginLeft: 10,
+    fontSize: 18,
   },
+  urlbuttonText: {
+    color: '#fff',
+    marginLeft: 10,
+    fontSize: 24,
+  },
+  itemText: {
+    fontSize: 16,
+  },
+  label: {
+    fontSize: 14,
+    marginBottom: 3,
+  }
 });
 
 export default NotasStack;

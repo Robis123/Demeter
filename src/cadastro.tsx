@@ -171,7 +171,7 @@ export default function Cadastro({ navigation }) {
                   options={{
                     mask: '*******************'
                   }}
-                  placeholder="Nome"
+                  placeholder="Razão Social"
                   value={nome}
                   onChangeText={(text) => {
                     // Limita o texto a 50 caracteres
@@ -268,7 +268,7 @@ export default function Cadastro({ navigation }) {
                     cadastradoSucesso();
                   }}
                 >
-                  Cadastrar
+                  <Text style={styles.buttonText}>Cadastrar</Text>
                 </Button>
               </>
             )}
@@ -280,13 +280,13 @@ export default function Cadastro({ navigation }) {
                   onPress={() => { addVarejista(); cadastradoSucesso();}
                   }
                 >
-                  Cadastrar
+                  <Text style={styles.buttonText}>Cadastrar</Text>
                 </Button>
               </>
             )}
 
             <Button style={styles.button} onPress={signOut}>
-              Sign Out
+              <Text style={styles.buttonText}>Deslogar</Text>
             </Button>
           </View>
         </ScrollView>
@@ -333,6 +333,13 @@ const styles = StyleSheet.create({
     height: 60,
     marginBottom: 20,
     padding: 10,
+    backgroundColor: '#4FAF5A',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollView: {
     flex: 1,

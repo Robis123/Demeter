@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Alert, ImageURISource, ImageRequireSource } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView, FlatList,KeyboardAvoidingView, Platform, Alert, ImageURISource, ImageRequireSource } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { db } from "../firebase/firebase.js";
-import { collection, getDocs, query, where, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { AuthContext } from '../context/authContext';
 import UserContext from "../context/userContext";
-import img from '../assets/Morango.png';
+import { Button, RadioButton } from "react-native-paper";
+import { TextInputMask } from 'react-native-masked-text';
+import {cadastradoAtualizadoSucesso, Toast} from "../utils/alerts";
+import { useForm } from "react-hook-form";
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +41,14 @@ const PerfilScreen = ({ navigation }) => {
         >
           <Ionicons name="clipboard" size={24} color="#fff" />
           <Text style={styles.buttonText}>Notas</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Dados')}
+        >
+          <Ionicons name="pricetags" size={24} color="#fff" />
+          <Text style={styles.buttonText}>Alterar Dados</Text>
         </TouchableOpacity>
         
         <TouchableOpacity
@@ -152,11 +163,234 @@ const NotasScreen = () => (
   </View>
 );
 
+const DadosScreen = ({navigation}) => {
+  const user = React.useContext(UserContext);
+  const { register, handleSubmit } = useForm();
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [cnpj, setCnpj] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailGoogle, setEmailGoogle] = useState("");
+  const [inscricaoEstadual, setInscricaoEstadual] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [bairroDistrito, setBairroDistrito] = useState("");
+  const [cep, setCep] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [uf, setUf] = useState("");
+
+  useEffect(() => {
+    register("nome");
+    register("cpfCnpj");
+    register("telefone");
+    register("email");
+    register("inscricaoEstadual");
+    register("endereco");
+    register("bairroDistrito");
+    register("cep");
+    register("cidade");
+    register("uf");
+  }, [register]);
+
+  console.log('teste: ', user.tipoUsuario)
+  console.log('teste2: ', user.email)
+  const attProdutor = async () => {
+    try {
+      // Obter o documento existente do usuário
+      const usuarioDocRef = doc(db, "usuarios", user.uid);
+      const usuarioDoc = await getDoc(usuarioDocRef);
+  
+      if (usuarioDoc.exists()) {
+        const usuarioData = usuarioDoc.data();
+  
+        // Criar um objeto apenas com os campos que você deseja atualizar
+        const dadosAtualizados = {
+          nome,
+          cpf,
+          cnpj,
+          telefone,
+          inscricaoEstadual,
+          endereco,
+          bairroDistrito,
+          cep,
+          cidade,
+          uf,
+        };
+  
+        // Mesclar os dados existentes com os novos dados
+        const dadosCompletos = { ...usuarioData, ...dadosAtualizados };
+  
+        // Atualizar o documento no Firestore
+        await setDoc(usuarioDocRef, dadosCompletos);
+  
+        navigation.navigate('Tabs');
+        console.log("Document updated with ID: " + user.uid);
+      }
+    } catch (e) {
+      console.error("Error updating document: ", e);
+    }
+  };
+
+  const confirmAtt = () => {
+    Alert.alert(
+      'Confirmar atualização', 
+      'Tem certeza de que deseja atualizar seus dados?',
+      [
+        {text: 'Cancelar', style: 'cancel'},
+        {text: 'Atualizar', onPress: () => {
+          attProdutor();
+          cadastradoAtualizadoSucesso();
+          setTimeout(() => {
+            navigation.navigate('Perfil');
+          }, 2000);
+        },
+      },
+      ],
+      {cancelable: false}
+    );
+  };
+
+  return(
+    // <View></View>
+    <KeyboardAvoidingView
+      style={styles.containerCadastro}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      enabled
+      keyboardVerticalOffset={-254}
+    >
+      <View style={styles.scrollViewContainer}>
+        <Text style={styles.text}>Atualização de Cadastro</Text>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode='on-drag'
+        >
+          <View style={styles.innerContainer}>
+              <>
+                <TextInputMask
+                  style={styles.input}
+                  type={'custom'}
+                  options={{
+                    mask: '*******************'
+                  }}
+                  placeholder="Razão Social"
+                  value={nome}
+                  onChangeText={(text) => {
+                    // Limita o texto a 50 caracteres
+                    if (text.length <= 50) {
+                      setNome(text);
+                    }
+                  }}
+                  maxLength={50}
+                />
+                <TextInputMask
+                  style={styles.input}
+                  type={'cnpj'}
+                  value={cnpj}
+                  onChangeText={(text) => setCnpj(text)}
+                  placeholder="CNPJ"
+                  keyboardType="numeric"
+                />
+                <TextInputMask
+                  style={styles.input}
+                  type={'cel-phone'}
+                  options={{
+                    maskType: 'BRL',
+                    withDDD: true,
+                    dddMask: '(99)'
+                  }}
+                  placeholder="Telefone"
+                  value={telefone}
+                  onSubmitEditing={attProdutor}
+                  onChangeText={text => {
+                    setTelefone(text);
+                  }}
+                />
+                <TextInputMask
+                  style={styles.input}
+                  type={'only-numbers'}
+                  maxLength={9}
+                  placeholder="Inscrição Estadual"
+                  value={inscricaoEstadual}
+                  onChangeText={(text) => setInscricaoEstadual(text)}
+                />
+                <TextInputMask
+                  style={styles.input}
+                  type={'custom'}
+                  options={{
+                    mask: '********************************'
+                  }}
+                  placeholder="Endereço"
+                  value={endereco}
+                  onChangeText={(text) => setEndereco(text)}
+                />
+                <TextInputMask
+                  style={styles.input}
+                  type={'custom'}
+                  options={{
+                    mask: '********************************'
+                  }}
+                  placeholder="Bairro ou Distrito"
+                  value={bairroDistrito}
+                  onChangeText={(text) => setBairroDistrito(text)}
+                />
+                <TextInputMask
+                  style={styles.input}
+                  type={'zip-code'}
+                  value={cep}
+                  onChangeText={(text) => setCep(text)}
+                  placeholder="CEP"
+                  keyboardType="numeric"
+                />
+                <TextInputMask
+                  style={styles.input}
+                  type={'custom'}
+                  options={{
+                    mask: '*******************'
+                  }}
+                  placeholder="Cidade"
+                  value={cidade}
+                  onChangeText={(text) => setCidade(text)}
+                />
+                <TextInputMask
+                  style={styles.input}
+                  type={'custom'}
+                  options={{
+                    mask: 'AA'
+                  }}
+                  placeholder="UF"
+                  value={uf}
+                  onChangeText={(text) => setUf(text.toUpperCase())}
+                />
+                <Button
+                  style={styles.buttonCadastro}
+                  mode="contained"
+                  onPress={() => {
+                    confirmAtt();
+                  }}
+                >
+                  <Text style={styles.buttonTextCadastro}>Atualizar</Text>
+                </Button>
+              </>
+            
+
+          </View>
+        </ScrollView>
+        <Toast/>
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
+  
+
+
 const PerfilStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Perfil" component={PerfilScreen} />
-    <Stack.Screen name="Produtos" component={ProdutosScreen} />
-    <Stack.Screen name="Notas" component={NotasScreen} />
+    <Stack.Screen name="Perfil" component={PerfilScreen} options={{ headerTransparent: true, headerTitle: '' }} />
+    <Stack.Screen name="Produtos" component={ProdutosScreen} options={{ headerTransparent: true, headerTitle: '' }} />
+    <Stack.Screen name="Notas" component={NotasScreen} options={{ headerTransparent: true, headerTitle: '' }}  />
+    <Stack.Screen name="Dados" component={DadosScreen} options={{ headerTransparent: true, headerTitle: '' }} />
   </Stack.Navigator>
 );
 
@@ -222,6 +456,68 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     marginLeft: 10,
+  },
+  containerCadastro: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrollViewContainer: {
+    flex: 1,
+    width: '100%',
+  },
+  innerContainer: {
+    width: '100%',
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  text: {
+    marginTop: 20,
+    marginBottom: 20,
+    fontSize: 25,
+    fontWeight: "bold",
+    textAlign: 'center', // Adicione esta linha
+  },
+  input: {
+    width: "100%",
+    marginBottom: 10,
+    height: 40,
+    borderColor: '#000',
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingHorizontal: 10,
+  },
+  buttonCadastro: {
+    width: '45%',
+    height: 60,
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#4FAF5A',
+  },
+  buttonTextCadastro: {
+    color: '#fff',
+    fontSize: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  userTypeText: { // Adicione esta linha
+    marginBottom: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  radioButtonContainer: { // Adicione esta linha
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
   },
 });
 

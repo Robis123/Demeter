@@ -13,6 +13,18 @@ const cadastradoSucesso = () => {
   });
 };
 
+const cadastradoAtualizadoSucesso = () => {
+  Toast.show({
+    type: 'success',
+    position: 'bottom',
+    text1: 'Cadastrado atualizado com sucesso',
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 30,
+    bottomOffset: 40,
+  });
+};
+
 const produtoSalvo = (booleano) => {
   if (booleano == true) {
     Toast.show({
@@ -40,4 +52,4 @@ const produtoSalvo = (booleano) => {
   
 
 
-export {cadastradoSucesso, Toast, produtoSalvo};
+export {cadastradoSucesso, cadastradoAtualizadoSucesso, Toast, produtoSalvo};

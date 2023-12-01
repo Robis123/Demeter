@@ -5,6 +5,7 @@ type User = {
   photoURL: string;
   email: string;
   uid: string;
+  tipoUsuario: string;
   // include other properties as needed
 };
 
