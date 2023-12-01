@@ -1,13 +1,50 @@
-import { Box, ScrollView, HStack, Button, Image, VStack, Input} from "native-base";
+import {
+  Box,
+  ScrollView,
+  HStack,
+  Button,
+  Image,
+  VStack,
+  Input,
+  View,
+  Text,
+  FlatList
+} from "native-base";
 import { Titulo } from "../components/titulo";
 import { Botao } from "../components/botao";
-import { useState } from "react";
-import { secoes } from '../utils/homeSecoesVarejista'
+
+import { secoes } from "../utils/homeSecoesVarejista";
+import UserContext from "../context/userContext";
+import { useContext, useEffect, useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../firebase/firebase";
+import { TouchableOpacity } from "react-native";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function Nfs() {
+  const user = useContext(UserContext);
+  const [produtos, setProdutos] = useState([]);
+  const [produtores, setProdutores] = useState([]);
   const [numSecao, setNumSecao] = useState(0);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [produtorSelecionado, setProdutorSelecionado] = useState(null);
+
+  const getProdutores = async () => {
+    try {
+      const produtosRef = collection(db, "usuarios");
+      const querySnapshot = await getDocs(produtosRef);
+
+      const produtosData = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        produtosData.push(data);
+      });
+      setProdutores(produtosData);
+    } catch (error) {
+      console.error("Erro ao obter produtos:", error);
+    }
+  };
+
   function avancarSecao() {
     if (numSecao < secoes.length - 1) {
       setNumSecao(numSecao + 1);
@@ -18,66 +55,94 @@ export default function Nfs() {
       setNumSecao(numSecao - 1);
     }
   }
+  const funcaoTeste = async(email) => {
+      try {
+        const produtosRef = collection(db, 'usuarios');
+        const q = query(produtosRef, where('email', '==', email));
+        const querySnapshot = await getDocs(q);
+  
+        const produtosData = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          produtosData.push(...data.produtos);
+        });
+        setProdutos(produtosData);
+        return console.log("sucesso")
+      } catch (error) {
+        console.error('Erro ao obter produtos:', error);
+      }
+
+  };
+
+  const renderItem = ({ item }) => (
+
+    <View>
+      <View style={styles.textContainer}>
+        <Text>Nome: {item.nome}</Text>
+        <Text>Endereço: {item.id} - {item.uf}</Text>
+        <Button onPress={() => {avancarSecao();funcaoTeste(item.email)}} bgColor="green.500">Conversar</Button>
+      </View>
+    </View>
+  );
+
+  const renderItem2 = ({ item }) => (
+    
+    <View>
+      <View style={styles.textContainer}>
+        <Text>Produto: {item.produto}</Text>
+        <Text>Quantidade: {item.quantidade}</Text>
+      </View>
+    </View>
+  ); 
+
+  useEffect(() => {
+    getProdutores();
+  }, [user]);
+
   return (
     <VStack flex={1}>
       <Box flex={1}>
-        {numSecao >= 0 && numSecao < 1 && <VStack alignItems='center'>
-          <Titulo px={5} w='100%'  fontSize='md'>Selecione a categoria do produto que procura e irá filtrar os produtores que possuem o produto:</Titulo>
-          <Titulo px={5} w='100%' color="black" fontSize='xl'>Categorias</Titulo>
-          <>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <HStack my={2}>
-              {secoes[numSecao]?.entradaCategoria?.map((entrada) => {
-                  return (
-                    <VStack px={2}>
-                      <Button p={2} onPress={() => {setCategoriaSelecionada(entrada.categoria);}} bgColor={categoriaSelecionada === entrada.categoria ? "blue.400" : "gray.100"}>
-                        <Image source={entrada.image} alt="Alternate Text" size="md" />
-                      </Button>
-                      <Titulo fontSize='md' mt={0}>{entrada.categoria}</Titulo>
-                    </VStack>
-                  );  
-                })} 
-              </HStack>
-            </ScrollView>
-          </>
-        </VStack>}
+        {numSecao >= 0 && numSecao < 1 && (
+          <VStack alignItems="center">
+            <Titulo px={5} w="100%" fontSize="md">
+              Selecione a categoria do produto que procura e irá filtrar os
+              produtores que possuem o produto:
+            </Titulo>
+            <Titulo px={5} w="100%" color="black" fontSize="xl">
+              Categorias
+            </Titulo>
+            
+            {produtores.length > 0 ? (
+              <FlatList
+                data={produtores}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+              />
+            ) : (
+              <Text>Nenhum produtor cadastrado.</Text>
+            )}
+           
+          </VStack>
+        )}
         <>
-            <ScrollView>
-              {secoes[numSecao]?.entradaProdutores?.map((entrada) => {
-                  return (
-                    <HStack px={2} m={5}>
-                      <Image source={entrada.Image} alt="Alternate Text" size="xl" />
-                      <VStack flex={1} alignItems='center' alignContent='center' p={5}>
-                        <Titulo mt={0}  fontSize='md' >{entrada.produtor}</Titulo>
-                        <Titulo mt={0} fontSize='md' >{entrada.localizacao}</Titulo>
-                        <Button bgColor='green.500' onPress={() => {avancarSecao(); setProdutorSelecionado(entrada);}}>Conversar</Button>
-                      </VStack>
-                    </HStack>
-                  );  
-                })} 
-            </ScrollView>
-            {secoes[numSecao]?.entradaProdutor?.map(() => {
-              return (
-                <VStack flex={1} alignItems='center' >
-                  <Image borderRadius={100} source={produtorSelecionado.Image} alt="Alternate Text" size="xl" />
-                  <Titulo color='blue.500'>{produtorSelecionado.produtor}</Titulo>
-                  <Titulo >Disponibilidade de produtos:</Titulo>
-                  <ScrollView>
-                    {produtorSelecionado.tiposProdutos.filter(produto => produto.categoria === 'Frutas').map((produto) => (
-                      <HStack>
-                        <Image m={3} size='lg' source={produto.image} alt="testeimage" />
-                        <VStack alignItems='flex-start'>
-                          <Titulo fontSize='lg' mt={0}>{produto.produto}</Titulo>
-                          <Titulo mt={2} w='100%'>Quantidade</Titulo>
-                        </VStack>
-                      </HStack>
-                    ))}
-                    <Button bgColor='green.500' onPress={() => {voltarSecao();}}>Conversar</Button>
-                  </ScrollView>
-                </VStack>
-              );
-            })}
-          </>
+        
+          {secoes[numSecao]?.entradaProdutor?.map(() => {
+            return (
+              <View>
+                <Text>Meus Produtos</Text>
+                {produtos.length > 0 ? (
+                  <FlatList
+                    data={produtos}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderItem2}
+                  />
+                ) : (
+                  <Text>Nenhum produto cadastrado.</Text>
+                )}
+              </View>
+                      );
+                    })}
+        </>
         {/* <ScrollView showsVerticalScrollIndicator={false}>
           {secoes[numSecao]?.entradaProdutores?.filter(produto => produto.categoria === categoriaSelecionada).map((entrada) => {
             return entrada.tiposProdutos.map((tipoProduto) => {
@@ -101,12 +166,79 @@ export default function Nfs() {
           })}
         </ScrollView> */}
       </Box>
-      
+
       {numSecao > 0 && numSecao < 3 && (
-            <Botao onPress={() => voltarSecao()} bgColor="gray.400">
-              Voltar
-            </Botao>
+        <Botao onPress={() => voltarSecao()} bgColor="gray.400">
+          Voltar
+        </Botao>
       )}
     </VStack>
   );
-}
+
+};
+
+const styles = ({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 20,
+  },
+  profileContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  displayName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    marginTop: 20,
+    width: '80%',
+    alignItems: 'center',
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#4FAF5A',
+    borderRadius: 10,
+    width: '100%',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    marginLeft: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  produtoContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  lixeiraIcon: {
+    marginLeft: 10,
+  },
+  textContainer: {
+    margin: 10,
+  },
+  deleteButton: {
+    marginLeft: 10,
+  },
+});
+
