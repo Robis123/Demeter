@@ -19,7 +19,7 @@ const screenOptions = {
 const tabs = [
   {
     id: 1,
-    name: 'Home', 
+    name: 'Início', 
     component: Home,
     icon: 'home'
   },

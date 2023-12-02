@@ -63,12 +63,12 @@ const secoes = [
       {
         id: 5,
         categoria: 'Adubo',
-        image: Adubos
+        image: Mudas
       },
       {
         id: 6,
         categoria: 'Mudas',
-        image: Mudas
+        image: Adubos
       },
     ],
   },

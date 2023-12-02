@@ -123,7 +123,8 @@ export default function Cadastro({ navigation }) {
         cep,
         cidade,
         uf,
-        tipoUsuario
+        tipoUsuario,
+        produtos: []
       });
   
       navigation.navigate('Tabs');

@@ -32,8 +32,9 @@ const PerfilProdutoresScreen = ({ navigation }) => {
 
   const getProdutores = async () => {
     try {
-      const produtosRef = collection(db, "usuarios");
-      const querySnapshot = await getDocs(produtosRef);
+      const produtosRef = collection(db, 'usuarios');
+        const q = query(produtosRef, where('tipoUsuario', '==', 'produtor'));
+        const querySnapshot = await getDocs(q);
 
       const produtosData = [];
       querySnapshot.forEach((doc) => {

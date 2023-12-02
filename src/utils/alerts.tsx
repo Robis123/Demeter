@@ -13,6 +13,19 @@ const cadastradoSucesso = () => {
   });
 };
 
+const notaFiscalSucesso = (mensagem: string) => {
+  console.log("Mensagem recebida:", mensagem);
+  Toast.show({
+    type: 'success',
+    position: 'bottom',
+    text1: mensagem,
+    visibilityTime: 4000,
+    autoHide: true,
+    topOffset: 30,
+    bottomOffset: 40,
+  });
+};
+
 const cadastradoAtualizadoSucesso = () => {
   Toast.show({
     type: 'success',
@@ -52,4 +65,4 @@ const produtoSalvo = (booleano) => {
   
 
 
-export {cadastradoSucesso, cadastradoAtualizadoSucesso, Toast, produtoSalvo};
+export {cadastradoSucesso, cadastradoAtualizadoSucesso, Toast, produtoSalvo, notaFiscalSucesso};

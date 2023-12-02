@@ -8,6 +8,7 @@ import { db } from "../firebase/firebase.js";
 import NFSE from '../utils/api';
 import { getUrlPdf } from '../utils/pablo';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { notaFiscalSucesso,  Toast } from '../utils/alerts';
 
 
 const Stack = createNativeStackNavigator();
@@ -55,6 +56,27 @@ const NotasScreen = ({ navigation }) => {
     setTotalSecao(novoTotal);
   };
 
+  const atualizarQuantidadeProduto = async (produto, quantidadeAtual) => {
+    try {
+      const usuarioRef = doc(db, 'usuarios', user.uid);
+      const usuarioDoc = await getDoc(usuarioRef);
+  
+      if (usuarioDoc.exists()) {
+        const produtos = usuarioDoc.data().produtos;
+        const produtoIndex = produtos.findIndex((p) => p.produto === produto.produto);
+  
+        if (produtoIndex !== -1) {
+          // Produto encontrado, atualize a quantidade
+          produtos[produtoIndex].quantidade -= quantidadeAtual;
+  
+          // Atualize o documento no Firestore
+          await updateDoc(usuarioRef, { produtos });
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar a quantidade do produto:', error);
+    }
+  };
   // Mova a adição de totalProduto para fora da função adicionarProduto
   useEffect(() => {
     var totalProduto = produtosSelecionados.reduce(
@@ -187,29 +209,35 @@ const NotasScreen = ({ navigation }) => {
               </View>
               {/* Botão de adição de produto */}
             </View>
-            <TouchableOpacity style={styles.addButton} onPress={() => {
-              const produto = {
-                produto: item.produto,
-                quantidade: quantidadeAtual,
-                valor: valorAtual,
-              };
-              adicionarProduto(produto);
-            }}>
-              <Ionicons name="add" size={24} color="#fff" />
-              <Text style={styles.buttonText}>Adicionar Produto</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.addButton} onPress={() => {
+                const produto = {
+                  produto: item.produto,
+                  quantidade: quantidadeAtual,
+                  valor: valorAtual,
+                };
+                const mensagem = `${item.produto} - Qtd: ${quantidadeAtual} - Vlr: ${valorAtual} -> Adicionados à nota fiscal`;
+                notaFiscalSucesso(mensagem);
+                adicionarProduto(produto);
+                atualizarQuantidadeProduto(item, quantidadeAtual);
+              }}>
+                <Ionicons name="add" size={24} color="#fff" />
+                <Text style={styles.buttonText}>Adicionar Produto</Text>
+              </TouchableOpacity>
           </View>
         )}
       />
 
       {/* Botão para emitir a nota fiscal */}
       <TouchableOpacity style={styles.emitirButton} onPress={() => {
-        emitirNotaFiscal(); // Adicione os parênteses aqui para chamar a função
-        navigation.navigate('ProdutosNotas');
-        getProdutos();
+          emitirNotaFiscal();
+          getProdutos();
+          setTimeout(() => {
+              navigation.navigate('ProdutosNotas');
+          }, 2000); // Adicione um atraso de 2 segundos
       }}>
-        <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
+          <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
       </TouchableOpacity>
+      <Toast />
     </View>
   );
 };
