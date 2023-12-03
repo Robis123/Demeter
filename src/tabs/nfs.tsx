@@ -24,7 +24,6 @@ const NotasScreen = ({ navigation }) => {
   const [produtosSelecionados, setProdutosSelecionados] = useState([]);
   const [path, setPath] = useState('');
   const [Bitera, setbitera] = useState()
-  const [totalquantidadeproduto, setTotalquantidadeproduto] = useState(0);
 
    
 
@@ -56,8 +55,6 @@ const NotasScreen = ({ navigation }) => {
       novoTotal += novoTotalProduto;
     }
 
-    setTotalquantidadeproduto(produtosSelecionados.length);
-    console.log('Quantidade total de produtos:', totalquantidadeproduto);
     console.log('Valor total', novoTotal);
     setTotalSecao(novoTotal);
   };
@@ -177,7 +174,7 @@ const NotasScreen = ({ navigation }) => {
             data.cidade,
             data.uf,
             data.inscricaoEstadual,
-            totalquantidadeproduto,
+            produtosSelecionados.length,
             'caixa',
             data.telefone,
             totalSecao,
@@ -202,6 +199,7 @@ const NotasScreen = ({ navigation }) => {
       // Aqui você pode usar o array de URLs (urls) conforme necessário
       console.log('Todas as URLs:', urls);
       console.log('Ultima URL:', lastUrl);
+      getProdutos();
       navigation.navigate('ProdutosNotas', {lastUrl: lastUrl});
   
       setProdutos([]);
@@ -300,10 +298,6 @@ const NotasScreen = ({ navigation }) => {
       {/* Botão para emitir a nota fiscal */}
       <TouchableOpacity style={styles.emitirButton} onPress={() => {
           emitirNotaFiscal();
-          getProdutos();
-          // setTimeout(() => {
-          //     navigation.navigate('ProdutosNotas', {lastUrl: lastUrl});
-          // }, 2000); // Adicione um atraso de 2 segundos
       }}>
           <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
       </TouchableOpacity>
@@ -337,7 +331,7 @@ const NotasScreen = ({ navigation }) => {
 //   );
 // };
 
-const Robson = ({ route }) => {
+const Robson = ({ route, navigation }) => {
   const { lastUrl} = route.params
   var bites = lastUrl; // Utilize a propriedade lastUrl passada como argumento
 
@@ -347,7 +341,13 @@ const Robson = ({ route }) => {
         <Ionicons name="download" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Download</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.urlButton} onPress={() => {Clipboard.setString(bites),alert('Link copiado para a área de transferência!')}}>
+      <TouchableOpacity style={styles.urlButton} onPress={() => {
+          Clipboard.setString(bites);
+          alert('Link copiado para a área de transferência!');
+          setTimeout(() => {
+            navigation.navigate('Notas');
+          }, 2000); // Adicione um atraso de 2 segundos
+        }}>
         <Ionicons name="copy" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Copiar link</Text>
       </TouchableOpacity>
