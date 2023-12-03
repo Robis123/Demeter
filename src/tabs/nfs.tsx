@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Linking, Clipboard, StyleSheet, TextInput, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, Clipboard, StyleSheet, TextInput, FlatList, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import UserContext from '../context/userContext';
 import { collection, getDocs, query, where, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
@@ -7,7 +7,7 @@ import { db } from "../firebase/firebase.js";
 import NFSE from '../utils/api';
 import { getUrlPdf } from '../utils/pablo';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { notaFiscalSucesso,  Toast } from '../utils/alerts';
+import { notaFiscalSucesso,  Toast, notaFiscalQtdErro } from '../utils/alerts';
 
 
 const Stack = createNativeStackNavigator();
@@ -21,6 +21,42 @@ const NotasScreen = ({ navigation }) => {
   const [totalSecao, setTotalSecao] = useState(0);
   const [produtosSelecionados, setProdutosSelecionados] = useState([]);
   const [Bitera, setbitera] = useState()
+
+  const images = {
+    banana: require('../assets/Banana.png'),
+    maca: require('../assets/Maça.png'),
+    pera: require('../assets/Pera.png'),
+    soja: require('../assets/Soja.png'),
+    trigo: require('../assets/Trigo.png'),
+    uva: require('../assets/Uva.png'),
+    morango: require('../assets/Morango.png'),
+    milho: require('../assets/Milho.png'),
+    mamão: require('../assets/Mamão.png'),
+    lentilha: require('../assets/Lentilha.png'),
+    leguminosas: require('../assets/Leguminosas.png'),
+    hortaliças: require('../assets/Hortaliças.png'),
+    'grão de bico': require('../assets/GrãodeBico.png'),
+    feijao: require('../assets/Feijão.png'),
+    espinafre: require('../assets/Espinafre.png'),
+    ervilha: require('../assets/Ervilha.png'),
+    couve: require('../assets/Couve.png'),
+    cevada: require('../assets/Cevada.png'),
+    cereais: require('../assets/Cereais.png'),
+    centeio: require('../assets/Centeio.png'),
+    brócolis: require('../assets/Brócolis.png'),
+    aveia: require('../assets/Aveia.png'),
+    arroz: require('../assets/Arroz.png'),
+    amendoim: require('../assets/Amendoim.png'),
+    alface: require('../assets/Alface.png'),
+    adubo: require('../assets/Adubo.png'),
+    'adubo organomineral': require('../assets/AduboOrganomineral.png'),
+    'adubo orgânico': require('../assets/AduboOrganico.png'),
+    'adubo mineral': require('../assets/AduboMineral.png'),
+    acelga: require('../assets/Acelga.png'),
+    'muda 1': require('../assets/Muda1.png'),
+    'muda 2': require('../assets/Muda2.png'),
+    'muda 3': require('../assets/Muda3.png'),
+  };
 
    
 
@@ -47,13 +83,11 @@ const NotasScreen = ({ navigation }) => {
       setProdutosSelecionados(novosProdutosSelecionados);
       //botão cinza
     } else {
-      // Novo produto, adicione ao array
       setProdutosSelecionados([...produtosSelecionados, produto]);
       novoTotal += novoTotalProduto;
-    }
-
     console.log('Valor total', novoTotal);
     setTotalSecao(novoTotal);
+    }
   };
 
   const atualizarQuantidadeProduto = async (produto, quantidadeAtual) => {
@@ -98,6 +132,11 @@ const NotasScreen = ({ navigation }) => {
       var produtosRef = collection(db, 'usuarios');
       var q = query(produtosRef, where('email', '==', user.email));
       var querySnapshot = await getDocs(q);
+      let dataAtual: Date = new Date();
+      let dia: string = String(dataAtual.getDate()).padStart(2, '0');
+      let mes: string = String(dataAtual.getMonth() + 1).padStart(2, '0'); // Os meses do JavaScript começam do 0
+      let ano: number = dataAtual.getFullYear();
+      let dataFormatada: string = dia + '/' + mes + '/' + ano;
   
       // Crie um array para armazenar as URLs
       const urls = [];
@@ -113,7 +152,7 @@ const NotasScreen = ({ navigation }) => {
             data.nome,
             data.bairroDistrito,
             data.cep,
-            '30/11/2023',
+            dataFormatada,
             data.endereco,
             data.cidade,
             data.uf,
@@ -188,6 +227,7 @@ const NotasScreen = ({ navigation }) => {
           <View style={{ flex: 1, alignItems: 'center', margin: 20 }}>
             <View style={styles.produtoContainer}>
               <View style={styles.textContainer}>
+                <Image style={{width: 75, height: 75}} source={images[item.produto.toLowerCase()]} />
                 <Text style={styles.itemText}>{item.produto}</Text>
                 <Text style={styles.itemText}>Categoria: {item.categoria}</Text>
                 <Text style={styles.itemText}>Quantidade: {item.quantidade}</Text>
@@ -218,20 +258,29 @@ const NotasScreen = ({ navigation }) => {
               </View>
               {/* Botão de adição de produto */}
             </View>
-              <TouchableOpacity style={styles.addButton} onPress={() => {
-                const produto = {
-                  produto: item.produto,
-                  quantidade: quantidadeAtual,
-                  valor: valorAtual,
-                };
-                const mensagem = `${item.produto} - Qtd: ${quantidadeAtual} - Vlr: ${valorAtual} -> Adicionados à nota fiscal`;
-                notaFiscalSucesso(mensagem);
+            <TouchableOpacity style={styles.addButton} onPress={async () => {
+              const produto = {
+                produto: item.produto,
+                quantidade: quantidadeAtual,
+                valor: valorAtual,
+                quantidadeTotal: parseInt(item.quantidade, 10) // Converta a string para um número
+              };
+              
+              const mensagem = `${item.produto} - Qtd: ${quantidadeAtual} - Vlr: ${valorAtual} -> Adicionados à nota fiscal`;
+              
+              if (produto.quantidade <= produto.quantidadeTotal) {
                 adicionarProduto(produto);
-                atualizarQuantidadeProduto(item, quantidadeAtual);
-              }}>
-                <Ionicons name="add" size={24} color="#fff" />
-                <Text style={styles.buttonText}>Adicionar Produto</Text>
-              </TouchableOpacity>
+                await atualizarQuantidadeProduto(item, quantidadeAtual);
+                notaFiscalSucesso(mensagem);
+                // Atualize a quantidade total disponível
+                produto.quantidadeTotal -= produto.quantidade;
+              } else {
+                notaFiscalQtdErro();
+              }
+            }}>
+              <Ionicons name="add" size={24} color="#fff" />
+              <Text style={styles.buttonText}>Adicionar Produto</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
@@ -241,6 +290,16 @@ const NotasScreen = ({ navigation }) => {
           emitirNotaFiscal();
       }}>
           <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.cancelarButton} onPress={() => {
+        // Adicione aqui a lógica para cancelar e zerar os arrays
+        setProdutos([]);
+        setProdutosSelecionados([]);
+        setTotaisProdutos([]);
+        setTotalSecao(0);
+        getProdutos();
+      }}>
+        <Text style={styles.buttonText}>Cancelar</Text>
       </TouchableOpacity>
       <Toast />
     </View>
@@ -265,6 +324,9 @@ const Robson = ({ route, navigation }) => {
       <TouchableOpacity style={styles.urlButton} onPress={() => {
           Linking.openURL(bites);
           attUrls(bites);
+          setTimeout(() => {
+            navigation.navigate('Notas');
+          }, 2000); // Adicione um atraso de 2 segundos
         }}>
         <Ionicons name="download" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Download</Text>
@@ -363,7 +425,7 @@ const styles = StyleSheet.create({
   emitirButton: {
     backgroundColor: '#1c7a27',
     borderRadius: 10,
-    padding: 20,
+    padding: 15,
     width: '80%',
     alignItems: 'center',
     margin: 10,
@@ -384,7 +446,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginBottom: 3,
-  }
+  },
+  cancelarButton: {
+    backgroundColor: '#808080', // Você pode escolher uma cor diferente
+    borderRadius: 10,
+    padding: 15,
+    width: '80%',
+    alignItems: 'center',
+    margin: 10,
+  },
 });
 
 export default NotasStack;

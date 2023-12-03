@@ -65,7 +65,7 @@ export default function App() {
   if (!user) {
     return(
       <NativeBaseProvider theme={TEMAS}>
-      <StatusBar backgroundColor={TEMAS.colors.gray[300]} />
+      <StatusBar backgroundColor={TEMAS.colors.white[300]} />
       <Login />
       <GoogleSigninButton
         style={{
@@ -85,7 +85,7 @@ export default function App() {
     <UserContext.Provider value={user}>
       <AuthContext.Provider value={{ signOut }}>
         <NativeBaseProvider theme={TEMAS}>
-          <StatusBar backgroundColor={TEMAS.colors.blue[300]} />
+          <StatusBar backgroundColor={TEMAS.colors.white[300]} />
           <Rotas  />
         </NativeBaseProvider>
       </AuthContext.Provider>

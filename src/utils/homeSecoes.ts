@@ -162,7 +162,7 @@ const secoes = [
           },
           {
             id: 4,
-            produto: 'Feijao',
+            produto: 'Feijão',
             image: Feijao
           },
           {

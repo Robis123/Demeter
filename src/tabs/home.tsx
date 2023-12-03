@@ -40,7 +40,7 @@ export default function Cadastro() {
         "lentilha": "../assets/Lentilha.png",
         "leguminosas": "../assets/Leguminosas.png",
         "hortaliças": "../assets/Hortaliças.png",
-        "Grão de bico": "../assets/Grão de Bico.png",
+        "grão de bico": "../assets/Grão de Bico.png",
         "feijao": "../assets/Feijão.png",
         "espinafre": "../assets/Espinafre.png",
         "ervilha": "../assets/Ervilha.png",
@@ -58,9 +58,9 @@ export default function Cadastro() {
         "Adubo orgânico": "../assets/Adubo Organico.png",
         "adubo mineral": "../assets/Adubo Mineral.png",
         "acelga": "../assets/Acelga.png",
-        "Muda 1": "../assets/Muda 1.png",
-        "Muda 2": "../assets/Muda 2.png",
-        "Muda 3": "../assets/Muda 3.png"
+        "muda 1": "../assets/Muda 1.png",
+        "muda 2": "../assets/Muda 2.png",
+        "muda 3": "../assets/Muda 3.png"
       }
     ]
 
@@ -118,7 +118,7 @@ export default function Cadastro() {
   }
   return (
     <VStack flex={1}>
-      <Titulo alignItems="center" p={5} justifyContent="center"> {" "}{secoes[numSecao].titulo}{" "} </Titulo>
+      <Titulo mt={0} alignItems="center" p={5} justifyContent="center"> {" "}{secoes[numSecao].titulo}{" "} </Titulo>
       <ScrollView>
         <Box mt={1} mb={0} alignItems="center" pr={5} pl={5} justifyContent="center" >
           <Flex direction="row" wrap="wrap" alignItems='center' justifyContent='center'>
@@ -158,7 +158,7 @@ export default function Cadastro() {
               <VStack flex={1} alignItems='center' p={5}>
                 <Image borderRadius={100} source={produtoSelecionado.image} alt="Alternate Text" size="xl" />
                 <Titulo color='black'>{produtoSelecionado.produto}</Titulo>
-                <Titulo fontSize='md'>Informe a quantidade que deseja adicionar do produto:</Titulo>
+                <Titulo fontSize='md'>Por favor, indique a quantidade do produto que deseja adicionar. Lembre-se, nós medimos nossos produtos em caixas:</Titulo>
                 <HStack alignItems='center' justifyContent='center'>
                   <Input keyboardType="numeric"  mt={5} w='90%' h='60%' placeholder="Quantidade.." bgColor="gray.200" fontSize="lg" value={quantidade} onChangeText={setQuantidade}/>
                 </HStack>
@@ -166,7 +166,7 @@ export default function Cadastro() {
                   <Button _text={{ fontSize: '3xl' }} m={4} p={5} bg='green.500' onPress={() => {setNumSecao(numSecao - 2); attProduto( categoriaSelecionada, produtoSelecionado.produto, quantidade );}} >
                     Salvar 
                   </Button>
-                  <Button _text={{ fontSize: '3xl' }} m={3} p={5} bg='gray.500' onPress={() => {setNumSecao(numSecao - 2);}} >
+                  <Button _text={{ fontSize: '3xl' }} m={4} p={5} bg='gray.500' onPress={() => {setNumSecao(numSecao - 2);}} >
                     Cancelar
                   </Button>
                 </VStack>

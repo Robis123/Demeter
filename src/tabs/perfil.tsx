@@ -80,7 +80,7 @@ const ProdutosScreen = () => {
     lentilha: require('../assets/Lentilha.png'),
     leguminosas: require('../assets/Leguminosas.png'),
     hortaliças: require('../assets/Hortaliças.png'),
-    'grão de bico': require('../assets/Grão de Bico.png'),
+    'grão de bico': require('../assets/GrãodeBico.png'),
     feijao: require('../assets/Feijão.png'),
     espinafre: require('../assets/Espinafre.png'),
     ervilha: require('../assets/Ervilha.png'),
@@ -94,13 +94,13 @@ const ProdutosScreen = () => {
     amendoim: require('../assets/Amendoim.png'),
     alface: require('../assets/Alface.png'),
     adubo: require('../assets/Adubo.png'),
-    'adubo organomineral': require('../assets/Adubo Organomineral.png'),
-    'adubo orgânico': require('../assets/Adubo Organico.png'),
-    'adubo mineral': require('../assets/Adubo Mineral.png'),
+    'adubo organomineral': require('../assets/AduboOrganomineral.png'),
+    'adubo orgânico': require('../assets/AduboOrganico.png'),
+    'adubo mineral': require('../assets/AduboMineral.png'),
     acelga: require('../assets/Acelga.png'),
-    'muda 1': require('../assets/Muda 1.png'),
-    'muda 2': require('../assets/Muda 2.png'),
-    'muda 3': require('../assets/Muda 3.png'),
+    'muda 1': require('../assets/Muda1.png'),
+    'muda 2': require('../assets/Muda2.png'),
+    'muda 3': require('../assets/Muda3.png'),
   };
 
   const getProdutos = async () => {
@@ -162,7 +162,7 @@ const ProdutosScreen = () => {
   const renderItem = ({ item }) => (
     
     <View style={styles.produtoContainer}>
-      <Image source={images[item.produto.toLowerCase()]} />
+      <Image style={{width: 75, height: 75}} source={images[item.produto.toLowerCase()]} />
       <View style={styles.textContainer}>
         <Text>Categoria: {item.categoria}</Text>
         <Text>Produto: {item.produto}</Text>
@@ -215,7 +215,7 @@ const NotasScreen = () => {
 
   const renderItem = ({ item, index }) => (
     <View>
-      <Text>Nota Fiscal {index + 1}</Text>
+      <Text style={styles.text}>Nota Fiscal {index + 1}</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() => Linking.openURL(item)}

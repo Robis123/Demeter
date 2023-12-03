@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, TextInput, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import UserContext from '../context/userContext';
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -30,36 +30,6 @@ const PerfilProdutoresScreen = ({ navigation }) => {
       console.error('Erro ao obter produtos:', error);
     }
   };
-
-  // const getProdutores = async () => {
-  //   try {
-  //     const produtosRef = collection(db, 'usuarios');
-  //     let q;
-  
-  //     if (filtroProduto) {
-  //       // Se houver um filtro de produto, filtre por produto e tipo de usuário
-  //       q = query(
-  //         produtosRef,
-  //         where('tipoUsuario', '==', 'produtor'),
-  //         where('produtos', 'array-contains', filtroProduto)
-  //       );
-  //     } else {
-  //       // Se não houver um filtro de produto, apenas filtre por tipo de usuário
-  //       q = query(produtosRef, where('tipoUsuario', '==', 'produtor'));
-  //     }
-  
-  //     const querySnapshot = await getDocs(q);
-  
-  //     const produtosData = [];
-  //     querySnapshot.forEach((doc) => {
-  //       const data = doc.data();
-  //       produtosData.push(data);
-  //     });
-  //     setProdutores(produtosData);
-  //   } catch (error) {
-  //     console.error("Erro ao obter produtores:", error);
-  //   }
-  // };
 
   const getProdutores = async () => {
     try {
@@ -121,7 +91,7 @@ const PerfilProdutoresScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.subtitle}>Pesquise o produto desejado e será filtrado os produtores correspondentes:</Text>
+      <Text style={styles.subtitle}>Pesquise o produto desejado e será filtrado os produtores correspondentes.  Lembre-se, nós medimos nossos produtos em caixas:</Text>
 
       <TextInput
         style={styles.input}
@@ -150,6 +120,42 @@ const ProdutorProdutosScreen = ({ route }) => {
   const { produtor } = route.params;
   const [produtosDoProdutor, setProdutosDoProdutor] = useState([]);
 
+  const images = {
+    banana: require('../assets/Banana.png'),
+    maca: require('../assets/Maça.png'),
+    pera: require('../assets/Pera.png'),
+    soja: require('../assets/Soja.png'),
+    trigo: require('../assets/Trigo.png'),
+    uva: require('../assets/Uva.png'),
+    morango: require('../assets/Morango.png'),
+    milho: require('../assets/Milho.png'),
+    mamão: require('../assets/Mamão.png'),
+    lentilha: require('../assets/Lentilha.png'),
+    leguminosas: require('../assets/Leguminosas.png'),
+    hortaliças: require('../assets/Hortaliças.png'),
+    'grão de bico': require('../assets/GrãodeBico.png'),
+    feijao: require('../assets/Feijão.png'),
+    espinafre: require('../assets/Espinafre.png'),
+    ervilha: require('../assets/Ervilha.png'),
+    couve: require('../assets/Couve.png'),
+    cevada: require('../assets/Cevada.png'),
+    cereais: require('../assets/Cereais.png'),
+    centeio: require('../assets/Centeio.png'),
+    brócolis: require('../assets/Brócolis.png'),
+    aveia: require('../assets/Aveia.png'),
+    arroz: require('../assets/Arroz.png'),
+    amendoim: require('../assets/Amendoim.png'),
+    alface: require('../assets/Alface.png'),
+    adubo: require('../assets/Adubo.png'),
+    'adubo organomineral': require('../assets/AduboOrganomineral.png'),
+    'adubo orgânico': require('../assets/AduboOrganico.png'),
+    'adubo mineral': require('../assets/AduboMineral.png'),
+    acelga: require('../assets/Acelga.png'),
+    'muda 1': require('../assets/Muda1.png'),
+    'muda 2': require('../assets/Muda2.png'),
+    'muda 3': require('../assets/Muda3.png'),
+  };
+
   useEffect(() => {
     const getProdutosDoProdutor = async () => {
       try {
@@ -174,6 +180,7 @@ const ProdutorProdutosScreen = ({ route }) => {
   const renderItemProdutos = ({ item }) => (
     <View>
       <View style={styles.cardProdutos}>
+        <Image style={{width: 75, height: 75}} source={images[item.produto.toLowerCase()]} />
         <Text style={styles.text}>Produto: {item.produto}</Text>
         <Text style={styles.text}>Quantidade: {item.quantidade}</Text>
       </View>
