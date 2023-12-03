@@ -67,6 +67,43 @@ const ProdutosScreen = () => {
   const user = useContext(UserContext);
   const [produtos, setProdutos] = useState([]);
   const alertRef = React.createRef();
+
+  const images = {
+    banana: require('../assets/Banana.png'),
+    maca: require('../assets/Maça.png'),
+    pera: require('../assets/Pera.png'),
+    soja: require('../assets/Soja.png'),
+    trigo: require('../assets/Trigo.png'),
+    uva: require('../assets/Uva.png'),
+    morango: require('../assets/Morango.png'),
+    milho: require('../assets/Milho.png'),
+    mamão: require('../assets/Mamão.png'),
+    lentilha: require('../assets/Lentilha.png'),
+    leguminosas: require('../assets/Leguminosas.png'),
+    hortaliças: require('../assets/Hortaliças.png'),
+    'grão de bico': require('../assets/Grão de Bico.png'),
+    feijao: require('../assets/Feijão.png'),
+    espinafre: require('../assets/Espinafre.png'),
+    ervilha: require('../assets/Ervilha.png'),
+    couve: require('../assets/Couve.png'),
+    cevada: require('../assets/Cevada.png'),
+    cereais: require('../assets/Cereais.png'),
+    centeio: require('../assets/Centeio.png'),
+    brócolis: require('../assets/Brócolis.png'),
+    aveia: require('../assets/Aveia.png'),
+    arroz: require('../assets/Arroz.png'),
+    amendoim: require('../assets/Amendoim.png'),
+    alface: require('../assets/Alface.png'),
+    adubo: require('../assets/Adubo.png'),
+    'adubo organomineral': require('../assets/Adubo Organomineral.png'),
+    'adubo orgânico': require('../assets/Adubo Organico.png'),
+    'adubo mineral': require('../assets/Adubo Mineral.png'),
+    acelga: require('../assets/Acelga.png'),
+    'muda 1': require('../assets/Muda 1.png'),
+    'muda 2': require('../assets/Muda 2.png'),
+    'muda 3': require('../assets/Muda 3.png'),
+  };
+
   const getProdutos = async () => {
     try {
       const produtosRef = collection(db, 'usuarios');
@@ -126,6 +163,7 @@ const ProdutosScreen = () => {
   const renderItem = ({ item }) => (
     
     <View style={styles.produtoContainer}>
+      <Image source={images[item.produto.toLowerCase()]} />
       <View style={styles.textContainer}>
         <Text>Categoria: {item.categoria}</Text>
         <Text>Produto: {item.produto}</Text>

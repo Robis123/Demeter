@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Linking, Clipboard, StyleSheet, TextInput, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { AuthContext } from '../context/authContext';
 import UserContext from '../context/userContext';
 import { collection, getDocs, query, where, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase.js";
@@ -15,14 +14,12 @@ const Stack = createNativeStackNavigator();
 
 const NotasScreen = ({ navigation }) => {
   const user = useContext(UserContext);
-  const [valor, setValor] = useState('');
   const [produtos, setProdutos] = useState([]);
   const [quantidadeAtual, setQuantidadeAtual] = useState(0);
   const [valorAtual, setValorAtual] = useState(0);
   const [totaisProdutos, setTotaisProdutos] = useState([]);
   const [totalSecao, setTotalSecao] = useState(0);
   const [produtosSelecionados, setProdutosSelecionados] = useState([]);
-  const [path, setPath] = useState('');
   const [Bitera, setbitera] = useState()
 
    
@@ -95,59 +92,6 @@ const NotasScreen = ({ navigation }) => {
     // Defina um estado para armazenar o valor do sessionStorage
     const [storedData, setStoredData] = useState('');
   }
-  // Função para emitir a nota fiscal
-
-  // var emitirNotaFiscal = async () => {
-  //   try {
-  //     var produtosRef = collection(db, 'usuarios');
-  //     var q = query(produtosRef, where('email', '==', user.email));
-  //     var querySnapshot = await getDocs(q);
-
-  //     querySnapshot.forEach(async (doc) => {
-  //       var data = doc.data();
-  //       NFSE(
-  //         data.inscricaoEstadual,
-  //         'Inscrição Estadual ST',
-  //         data.cnpj,
-  //         data.nome,
-  //         data.bairroDistrito,
-  //         data.cep,
-  //         '30/11/2023',
-  //         data.endereco,
-  //         data.cidade,
-  //         data.uf,
-  //         '11111111',
-  //         100,
-  //         'caixa',
-  //         data.telefone,
-  //         145.50,
-  //         JSON.stringify(data.produtos)
-  //       )
-  //         .then(async (result) => {
-            
-  //           var url = await getUrlPdf(result);
-  //           var json = { testeurl: url };
-  //           return Robson(json)
-
-  //           //Setbitera(url)
-  //           // console.log(url);
-  //           // setPath(url);
-  //           // setPathReady(true);
-  //           //handleCopyPress(url);
-  //         })
-  //         .catch(async (error) => {
-  //           console.error('Error:', error);
-  //         });
-  //     });
-  //     setProdutos([]);
-  //     setProdutosSelecionados([]);
-  //     setTotaisProdutos([]);
-  //     setTotalSecao(0);
-
-  //   } catch (error) {
-  //     console.error('Erro ao obter produtos:', error);
-  //   }
-  // };
 
   var emitirNotaFiscal = async () => {
     try {
@@ -183,9 +127,6 @@ const NotasScreen = ({ navigation }) => {
   
           const url = await getUrlPdf(result);
           urls.push(url);
-  
-          // Não use 'return' aqui, pois não é necessário
-          // Você já tem a lista de URLs (urls) fora deste loop
   
         } catch (error) {
           console.error('Error:', error);
@@ -306,31 +247,6 @@ const NotasScreen = ({ navigation }) => {
   );
 };
 
-// const Robson = (url) => {
-//   var bites = url.teste
-//   console.log(bites)
-//   // const handleDownloadPress = async (urlDesejada) => {
-//   //   await Linking.openURL(urlDesejada);
-//   // };
-  
-//   // const handleCopyPress = async (urlDesejada) => {
-//   //   Clipboard.setString(urlDesejada);
-//   //   alert('Link copiado para a área de transferência!');
-//   // };
-//   return(
-//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//       <TouchableOpacity style={styles.urlButton} onPress={() => console.log('url dentro do return', bites)}>
-//         <Ionicons name="download" size={30} color="#fff" />
-//         <Text style={styles.urlbuttonText}>Download</Text>
-//       </TouchableOpacity>
-//       <TouchableOpacity style={styles.urlButton} onPress={() => console.log('url dentro do return', bites)}>
-//         <Ionicons name="copy" size={30} color="#fff" />
-//         <Text style={styles.urlbuttonText}>Copiar link</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
 const Robson = ({ route, navigation }) => {
   const { lastUrl} = route.params
   var bites = lastUrl; // Utilize a propriedade lastUrl passada como argumento
@@ -355,61 +271,11 @@ const Robson = ({ route, navigation }) => {
   );
 };
 
-//   Clipboard.setString(urlDesejada);
-// await Linking.openURL(urlDesejada);
-
-// const Robson = ({ path }) => {
-//   console.log(typeof(path));
-//   console.log('ROBSON PATH:', path)
-//   return (
-//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//       <TouchableOpacity
-//         style={styles.addButton}
-//         onPress={() => handleDownloadPress(path)}
-//       >
-//         <Ionicons name="download" size={20} color="#fff" />
-//         <Text style={styles.buttonText}>Download</Text>
-//       </TouchableOpacity>
-//       <TouchableOpacity
-//         style={styles.addButton}
-//         onPress={() => handleCopyPress(path)}
-//       >
-//         <Ionicons name="copy" size={20} color="#fff" />
-//         <Text style={styles.buttonText}>Copiar link</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
 const handleDownloadPress = (path: string) => {
   // Abra o link no navegador padrão
   console.log(path)
   Linking.openURL(path);
 };
-
-const handleCopyPress = (path) => {
-  try {
-    console.log('jsonteorico:: ' + path)
-    console.log('CopyLink:', path)
-    Clipboard.setString(path);
-    alert('Link copiado para a área de transferência!');
-  } catch (error) {
-    console.error('Erro ao copiar o link para a área de transferência:', error);
-  }
-};
-
-// const handleCopyPress = (path: string) => {
-//   const pathString = typeof path === 'string' ? path : JSON.stringify(path);
-//   try {
-//     // Copie o link para a área de transferência
-//     //MODIFIQUEI AQUI: com use context
-//     console.log('CopyLink:', pathString)
-//     Clipboard.setString(pathString);
-//     alert('Link copiado para a área de transferência!');
-//   } catch (error) {
-//     console.error('Erro ao copiar o link para a área de transferência:', error);
-//   }
-// };
 
 const NotasStack = () => (
   <Stack.Navigator>

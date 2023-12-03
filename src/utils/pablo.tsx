@@ -32,23 +32,5 @@ async function getUrlPdf(path) {
         throw error;
     }
 }
-// async function downloadPdf(path) {
-//     try {
-//         const url = await getDownloadURL(path);
 
-//         const response = await axios({
-//             url,
-//             method: 'GET',
-//             responseType: 'blob',
-//         });
-
-//         const blob = new Blob([response.data], { type: 'application/pdf' });
-//         FileSaver.saveAs(blob, 'nfse.pdf');
-//     } catch (error) {
-//         console.error('Erro ao obter a URL de download:', error);
-//         throw error;
-//     }
-// }
-
-// getUrlPdf('11.111.1231234-99/323494.pdf');
 export { getUrlPdf };

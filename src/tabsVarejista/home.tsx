@@ -31,22 +31,40 @@ const PerfilProdutoresScreen = ({ navigation }) => {
     }
   };
 
+  // const getProdutores = async () => {
+  //   try {
+  //     const produtosRef = collection(db, 'usuarios');
+  //     let q;
+  
+  //     if (filtroProduto) {
+  //       // Se houver um filtro de produto, filtre por produto e tipo de usuário
+  //       q = query(
+  //         produtosRef,
+  //         where('tipoUsuario', '==', 'produtor'),
+  //         where('produtos', 'array-contains', filtroProduto)
+  //       );
+  //     } else {
+  //       // Se não houver um filtro de produto, apenas filtre por tipo de usuário
+  //       q = query(produtosRef, where('tipoUsuario', '==', 'produtor'));
+  //     }
+  
+  //     const querySnapshot = await getDocs(q);
+  
+  //     const produtosData = [];
+  //     querySnapshot.forEach((doc) => {
+  //       const data = doc.data();
+  //       produtosData.push(data);
+  //     });
+  //     setProdutores(produtosData);
+  //   } catch (error) {
+  //     console.error("Erro ao obter produtores:", error);
+  //   }
+  // };
+
   const getProdutores = async () => {
     try {
       const produtosRef = collection(db, 'usuarios');
-      let q;
-  
-      if (filtroProduto) {
-        // Se houver um filtro de produto, filtre por produto e tipo de usuário
-        q = query(
-          produtosRef,
-          where('tipoUsuario', '==', 'produtor'),
-          where('produtos', 'array-contains', filtroProduto)
-        );
-      } else {
-        // Se não houver um filtro de produto, apenas filtre por tipo de usuário
-        q = query(produtosRef, where('tipoUsuario', '==', 'produtor'));
-      }
+      const q = query(produtosRef, where('tipoUsuario', '==', 'produtor'));
   
       const querySnapshot = await getDocs(q);
   
@@ -55,7 +73,18 @@ const PerfilProdutoresScreen = ({ navigation }) => {
         const data = doc.data();
         produtosData.push(data);
       });
-      setProdutores(produtosData);
+  
+      // Filtrar os produtores no lado do cliente
+      const produtoresFiltrados = produtosData.filter((produtor) => {
+        if (!filtroProduto) {
+          return true;
+        }
+        return produtor.produtos && produtor.produtos.some((produto) => {
+          return produto.produto === filtroProduto;
+        });
+      });
+  
+      setProdutores(produtoresFiltrados);
     } catch (error) {
       console.error("Erro ao obter produtores:", error);
     }
@@ -64,7 +93,7 @@ const PerfilProdutoresScreen = ({ navigation }) => {
 
   useEffect(() => {
     getProdutores();
-  }, [user]);
+  }, [user, filtroProduto]);
 
   useEffect(() => {
     getProdutos();
