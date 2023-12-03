@@ -23,6 +23,10 @@ const NotasScreen = ({ navigation }) => {
   const [totalSecao, setTotalSecao] = useState(0);
   const [produtosSelecionados, setProdutosSelecionados] = useState([]);
   const [path, setPath] = useState('');
+  const [Bitera, setbitera] = useState()
+  const [totalquantidadeproduto, setTotalquantidadeproduto] = useState(0);
+
+   
 
 
 
@@ -52,6 +56,8 @@ const NotasScreen = ({ navigation }) => {
       novoTotal += novoTotalProduto;
     }
 
+    setTotalquantidadeproduto(produtosSelecionados.length);
+    console.log('Quantidade total de produtos:', totalquantidadeproduto);
     console.log('Valor total', novoTotal);
     setTotalSecao(novoTotal);
   };
@@ -84,6 +90,7 @@ const NotasScreen = ({ navigation }) => {
       0
     );
     setTotaisProdutos([...totaisProdutos, totalProduto]);
+    
     console.log(produtosSelecionados)
   }, [produtosSelecionados]);
 
@@ -93,57 +100,120 @@ const NotasScreen = ({ navigation }) => {
   }
   // Função para emitir a nota fiscal
 
-  var [pathReady, setPathReady] = useState(false);
+  // var emitirNotaFiscal = async () => {
+  //   try {
+  //     var produtosRef = collection(db, 'usuarios');
+  //     var q = query(produtosRef, where('email', '==', user.email));
+  //     var querySnapshot = await getDocs(q);
+
+  //     querySnapshot.forEach(async (doc) => {
+  //       var data = doc.data();
+  //       NFSE(
+  //         data.inscricaoEstadual,
+  //         'Inscrição Estadual ST',
+  //         data.cnpj,
+  //         data.nome,
+  //         data.bairroDistrito,
+  //         data.cep,
+  //         '30/11/2023',
+  //         data.endereco,
+  //         data.cidade,
+  //         data.uf,
+  //         '11111111',
+  //         100,
+  //         'caixa',
+  //         data.telefone,
+  //         145.50,
+  //         JSON.stringify(data.produtos)
+  //       )
+  //         .then(async (result) => {
+            
+  //           var url = await getUrlPdf(result);
+  //           var json = { testeurl: url };
+  //           return Robson(json)
+
+  //           //Setbitera(url)
+  //           // console.log(url);
+  //           // setPath(url);
+  //           // setPathReady(true);
+  //           //handleCopyPress(url);
+  //         })
+  //         .catch(async (error) => {
+  //           console.error('Error:', error);
+  //         });
+  //     });
+  //     setProdutos([]);
+  //     setProdutosSelecionados([]);
+  //     setTotaisProdutos([]);
+  //     setTotalSecao(0);
+
+  //   } catch (error) {
+  //     console.error('Erro ao obter produtos:', error);
+  //   }
+  // };
+
   var emitirNotaFiscal = async () => {
     try {
       var produtosRef = collection(db, 'usuarios');
       var q = query(produtosRef, where('email', '==', user.email));
       var querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach(async (doc) => {
+  
+      // Crie um array para armazenar as URLs
+      const urls = [];
+  
+      // Use Promise.all para esperar todas as promessas serem resolvidas
+      await Promise.all(querySnapshot.docs.map(async (doc) => {
         var data = doc.data();
-        NFSE(
-          data.inscricaoEstadual,
-          'Inscrição Estadual ST',
-          data.cnpj,
-          data.nome,
-          data.bairroDistrito,
-          data.cep,
-          '30/11/2023',
-          data.endereco,
-          data.cidade,
-          data.uf,
-          '11111111',
-          100,
-          'caixa',
-          data.telefone,
-          145.50,
-          JSON.stringify(data.produtos)
-        )
-          .then(async (result) => {
-            var url = await getUrlPdf(result);
-
-            // console.log(url);
-            // setPath(url);
-            // setPathReady(true);
-            //handleCopyPress(url);
-            var json = { testeurl: url };
-            return Robson(json);
-          })
-          .catch(async (error) => {
-            console.error('Error:', error);
-          });
-      });
-
+        try {
+          const result = await NFSE(
+            '123456789',
+            'Inscrição Estadual ST',
+            data.cnpj,
+            data.nome,
+            data.bairroDistrito,
+            data.cep,
+            '30/11/2023',
+            data.endereco,
+            data.cidade,
+            data.uf,
+            data.inscricaoEstadual,
+            totalquantidadeproduto,
+            'caixa',
+            data.telefone,
+            totalSecao,
+            JSON.stringify(produtosSelecionados)
+          );
+  
+          const url = await getUrlPdf(result);
+          urls.push(url);
+  
+          // Não use 'return' aqui, pois não é necessário
+          // Você já tem a lista de URLs (urls) fora deste loop
+  
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }));
+  
+      // Atualize o estado diretamente com a última URL (opcional)
+      const lastUrl = urls[urls.length - 1];
+      setbitera(lastUrl);
+  
+      // Aqui você pode usar o array de URLs (urls) conforme necessário
+      console.log('Todas as URLs:', urls);
+      console.log('Ultima URL:', lastUrl);
+      navigation.navigate('ProdutosNotas', {lastUrl: lastUrl});
+  
       setProdutos([]);
       setProdutosSelecionados([]);
       setTotaisProdutos([]);
       setTotalSecao(0);
-
+  
     } catch (error) {
       console.error('Erro ao obter produtos:', error);
     }
   };
+
   useEffect(() => {
     getProdutos();
   }, [user]);
@@ -231,9 +301,9 @@ const NotasScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.emitirButton} onPress={() => {
           emitirNotaFiscal();
           getProdutos();
-          setTimeout(() => {
-              navigation.navigate('ProdutosNotas');
-          }, 2000); // Adicione um atraso de 2 segundos
+          // setTimeout(() => {
+          //     navigation.navigate('ProdutosNotas', {lastUrl: lastUrl});
+          // }, 2000); // Adicione um atraso de 2 segundos
       }}>
           <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
       </TouchableOpacity>
@@ -242,25 +312,42 @@ const NotasScreen = ({ navigation }) => {
   );
 };
 
-const Robson = (url) => {
-  var urlDesejada = url.testeurl;
+// const Robson = (url) => {
+//   var bites = url.teste
+//   console.log(bites)
+//   // const handleDownloadPress = async (urlDesejada) => {
+//   //   await Linking.openURL(urlDesejada);
+//   // };
+  
+//   // const handleCopyPress = async (urlDesejada) => {
+//   //   Clipboard.setString(urlDesejada);
+//   //   alert('Link copiado para a área de transferência!');
+//   // };
+//   return(
+//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+//       <TouchableOpacity style={styles.urlButton} onPress={() => console.log('url dentro do return', bites)}>
+//         <Ionicons name="download" size={30} color="#fff" />
+//         <Text style={styles.urlbuttonText}>Download</Text>
+//       </TouchableOpacity>
+//       <TouchableOpacity style={styles.urlButton} onPress={() => console.log('url dentro do return', bites)}>
+//         <Ionicons name="copy" size={30} color="#fff" />
+//         <Text style={styles.urlbuttonText}>Copiar link</Text>
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
 
-  const handleDownloadPress = async (urlDesejada) => {
-    await Linking.openURL(urlDesejada);
-  };
-
-  const handleCopyPress = async (urlDesejada) => {
-    Clipboard.setString(urlDesejada);
-    alert('Link copiado para a área de transferência!');
-  };
+const Robson = ({ route }) => {
+  const { lastUrl} = route.params
+  var bites = lastUrl; // Utilize a propriedade lastUrl passada como argumento
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <TouchableOpacity style={styles.urlButton} onPress={handleDownloadPress}>
+      <TouchableOpacity style={styles.urlButton} onPress={() => Linking.openURL(bites)}>
         <Ionicons name="download" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Download</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.urlButton} onPress={handleCopyPress}>
+      <TouchableOpacity style={styles.urlButton} onPress={() => {Clipboard.setString(bites),alert('Link copiado para a área de transferência!')}}>
         <Ionicons name="copy" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Copiar link</Text>
       </TouchableOpacity>
@@ -268,7 +355,8 @@ const Robson = (url) => {
   );
 };
 
-
+//   Clipboard.setString(urlDesejada);
+// await Linking.openURL(urlDesejada);
 
 // const Robson = ({ path }) => {
 //   console.log(typeof(path));

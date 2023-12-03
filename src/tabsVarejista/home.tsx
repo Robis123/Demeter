@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import UserContext from '../context/userContext';
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -12,6 +12,7 @@ const PerfilProdutoresScreen = ({ navigation }) => {
   const user = React.useContext(UserContext);
   const [produtos, setProdutos] = useState([]);
   const [produtores, setProdutores] = useState([]);
+  const [filtroProduto, setFiltroProduto] = useState('');
 
   const getProdutos = async () => {
     try {
@@ -33,9 +34,22 @@ const PerfilProdutoresScreen = ({ navigation }) => {
   const getProdutores = async () => {
     try {
       const produtosRef = collection(db, 'usuarios');
-        const q = query(produtosRef, where('tipoUsuario', '==', 'produtor'));
-        const querySnapshot = await getDocs(q);
-
+      let q;
+  
+      if (filtroProduto) {
+        // Se houver um filtro de produto, filtre por produto e tipo de usuário
+        q = query(
+          produtosRef,
+          where('tipoUsuario', '==', 'produtor'),
+          where('produtos', 'array-contains', filtroProduto)
+        );
+      } else {
+        // Se não houver um filtro de produto, apenas filtre por tipo de usuário
+        q = query(produtosRef, where('tipoUsuario', '==', 'produtor'));
+      }
+  
+      const querySnapshot = await getDocs(q);
+  
       const produtosData = [];
       querySnapshot.forEach((doc) => {
         const data = doc.data();
@@ -43,9 +57,10 @@ const PerfilProdutoresScreen = ({ navigation }) => {
       });
       setProdutores(produtosData);
     } catch (error) {
-      console.error("Erro ao obter produtos:", error);
+      console.error("Erro ao obter produtores:", error);
     }
   };
+  
 
   useEffect(() => {
     getProdutores();
@@ -59,7 +74,7 @@ const PerfilProdutoresScreen = ({ navigation }) => {
     <View>
       <View style={styles.cardProdutores}>
         <Text style={styles.text}>Nome: {item.nome}</Text>
-        <Text style={styles.text}>Endereço: {item.id} - {item.uf}</Text>
+        <Text style={styles.text}>Localização: {item.uf}</Text>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => {
@@ -77,6 +92,15 @@ const PerfilProdutoresScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.subtitle}>Pesquise o produto desejado e será filtrado os produtores correspondentes:</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Digite sua pesquisa..."
+        value={filtroProduto}
+        onChangeText={(text) => setFiltroProduto(text)}
+      />
+
       <Text style={styles.title}>Produtores:</Text>
       {produtores.length > 0 ? (
         <FlatList
@@ -121,8 +145,8 @@ const ProdutorProdutosScreen = ({ route }) => {
   const renderItemProdutos = ({ item }) => (
     <View>
       <View style={styles.cardProdutos}>
-        <Text>Produto: {item.produto}</Text>
-        <Text>Quantidade: {item.quantidade}</Text>
+        <Text style={styles.text}>Produto: {item.produto}</Text>
+        <Text style={styles.text}>Quantidade: {item.quantidade}</Text>
       </View>
     </View>
   );
@@ -133,10 +157,10 @@ const ProdutorProdutosScreen = ({ route }) => {
     borderColor: '#ddd',
     borderRadius: 8, padding: 20}}>
         <Text style={{fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 5,}}>Produtor:</Text>
-        <Text>{produtor.nome}</Text>
+        <Text style={styles.text}>{produtor.nome}</Text>
         <Text style={styles.title}>Contato:</Text>
-        <Text>{produtor.email}</Text>
-        <Text>{produtor.telefone}</Text>
+        <Text style={styles.text}>{produtor.email}</Text>
+        <Text style={styles.text}>{produtor.telefone}</Text>
       </View>
       <View style={{ flex: 1, alignItems: 'center' }}>
         <Text style={styles.title}>Produtos:</Text>
@@ -221,7 +245,23 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     marginVertical: 2,
-  }
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+    width: '80%',
+    alignSelf: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#808080',
+    alignSelf: 'center',
+  },
 });
 
 export default VarejistaStack;
