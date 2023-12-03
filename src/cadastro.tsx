@@ -100,7 +100,6 @@ export default function Cadastro({ navigation }) {
         cidade,
         uf,
         tipoUsuario,
-        produtos: [] 
       });
       navigation.navigate('TabsVarejista');
       console.log("Document written with ID: ", docRef.id);
@@ -124,7 +123,8 @@ export default function Cadastro({ navigation }) {
         cidade,
         uf,
         tipoUsuario,
-        produtos: []
+        produtos: [],
+        urls: []
       });
   
       navigation.navigate('Tabs');

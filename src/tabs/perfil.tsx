@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView, FlatList,KeyboardAvoidingView, Platform, Alert, ImageURISource, ImageRequireSource } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView, FlatList,KeyboardAvoidingView, Platform, Alert, Linking } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { db } from "../firebase/firebase.js";
@@ -37,8 +37,7 @@ const PerfilScreen = ({ navigation }) => {
         
         <TouchableOpacity
           style={styles.button}
-          onPress={() => 'https://firebasestorage.googleapis.com/v0/b/demeter-2a73f.appspot.com/o/11.111.1231234-99%2F323494.pdf?alt=media&token=a1bc5baf-bd0e-4018-a64a-dbe1ebb227c4'}
-        >
+          onPress={() => navigation.navigate('Notas')}>
           <Ionicons name="clipboard" size={24} color="#fff" />
           <Text style={styles.buttonText}>Notas</Text>
         </TouchableOpacity>
@@ -193,14 +192,58 @@ const ProdutosScreen = () => {
   );
 };
 
-const NotasScreen = () => (
-  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    <Text>Notas Screen</Text>
-    
-    
-    {/* Adicione aqui a lógica para mostrar as notas do usuário */}
-  </View>
-);
+const NotasScreen = () => {
+  const user = useContext(UserContext);
+  const [urls, setUrls] = useState([]);
+
+  const getUrls = async () => {
+    try {
+      const userRef = doc(db, 'usuarios', user.uid);
+      const userSnap = await getDoc(userRef);
+  
+      if (userSnap.exists()) {
+        setUrls(userSnap.data().urls);
+      }
+    } catch (error) {
+      console.error('Erro ao obter URLs:', error);
+    }
+  };
+  
+  useEffect(() => {
+    getUrls();
+  }, [user]);
+
+  const renderItem = ({ item, index }) => (
+    <View>
+      <Text>Nota Fiscal {index + 1}</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => Linking.openURL(item)}
+      >
+        <Ionicons name="document-text-outline" size={24} color="#fff" />
+        <Text style={styles.buttonText}>Abrir Nota Fiscal</Text>
+      </TouchableOpacity>
+    </View>
+  );
+  
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Minhas Notas Fiscais</Text>
+      {urls.length > 0 ? (
+        <FlatList
+          data={urls}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <Text>Nenhuma nota fiscal cadastrada.</Text>
+      )}
+    </View>
+  );
+};
+  
+
 
 const DadosScreen = ({navigation}) => {
   const user = React.useContext(UserContext);

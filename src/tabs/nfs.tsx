@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Linking, Clipboard, StyleSheet, TextInput, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import UserContext from '../context/userContext';
-import { collection, getDocs, query, where, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../firebase/firebase.js";
 import NFSE from '../utils/api';
 import { getUrlPdf } from '../utils/pablo';
@@ -250,16 +250,29 @@ const NotasScreen = ({ navigation }) => {
 const Robson = ({ route, navigation }) => {
   const { lastUrl} = route.params
   var bites = lastUrl; // Utilize a propriedade lastUrl passada como argumento
+  const user = useContext(UserContext);
+
+
+  const attUrls = async (url) => {
+    var userRef = doc(db, 'usuarios', user.uid);
+    await updateDoc(userRef, {
+      urls: arrayUnion(url)
+    });
+  };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <TouchableOpacity style={styles.urlButton} onPress={() => Linking.openURL(bites)}>
+      <TouchableOpacity style={styles.urlButton} onPress={() => {
+          Linking.openURL(bites);
+          attUrls(bites);
+        }}>
         <Ionicons name="download" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Download</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.urlButton} onPress={() => {
           Clipboard.setString(bites);
           alert('Link copiado para a área de transferência!');
+          attUrls(bites);
           setTimeout(() => {
             navigation.navigate('Notas');
           }, 2000); // Adicione um atraso de 2 segundos
