@@ -47,14 +47,14 @@ produtos.forEach(prod => {
   htmlString += `
     <tr class="titles">
       <th class="cod" style="width: 15.5mm">CÓDIGO</th>
-      <th class="descrit" style="width: 66.1mm">${prod.nome}</th>
+      <th class="descrit" style="width: 66.1mm">${prod.produto}</th>
       <th class="ncmsh">05</th>
       <th class="cst">030</th> 
       <th class="cfop">5.102</th>
       <th class="un">Caixas</th>
-      <th class="amount">${prod.qtd}</th>  
-      <th class="valUnit">${prod.vlrunit}</th>              
-      <th class="valTotal">${prod.qtd * prod.vlrunit}</th>   
+      <th class="amount">${prod.quantidade}</th>  
+      <th class="valUnit">${prod.valor}</th>              
+      <th class="valTotal">${prod.quantidade * prod.valor}</th>   
       <th class="bcIcms">0,00</th>
       <th class="valIcms">0,00</th>
       <th class="valIpi">0,00</th>
