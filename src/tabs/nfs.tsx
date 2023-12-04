@@ -146,17 +146,16 @@ const NotasScreen = ({ navigation }) => {
       let mes: string = String(dataAtual.getMonth() + 1).padStart(2, '0');
       let ano: number = dataAtual.getFullYear();
       let dataFormatada: string = dia + '/' + mes + '/' + ano;
-  
+
       const urls = [];
-  
+
       await Promise.all(
         querySnapshot.docs.map(async (doc) => {
           var data = doc.data();
           try {
             // Simulate a delay of 1 second
             await new Promise(resolve => setTimeout(resolve, 1000));
-  
-            const result = await aleluia(
+            const result = await NFSE(
               '123456789',
               'Inscrição Estadual ST',
               data.cnpj,
