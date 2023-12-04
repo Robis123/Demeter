@@ -5,9 +5,10 @@ import UserContext from '../context/userContext';
 import { collection, getDocs, query, where, doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../firebase/firebase.js";
 import NFSE from '../utils/api';
+import { aleluia } from '../utils/Gerarpdf';
 import { getUrlPdf } from '../utils/pablo';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { notaFiscalSucesso,  Toast, notaFiscalQtdErro } from '../utils/alerts';
+import { notaFiscalSucesso,  Toast, notaFiscalQtdErro, error } from '../utils/alerts';
 
 
 const Stack = createNativeStackNavigator();
@@ -132,70 +133,82 @@ const NotasScreen = ({ navigation }) => {
   var emitirNotaFiscal = async () => {
     try {
       setBotaoTexto('Loading...');
-
+  
+      // Simulate a delay of 1 second
+      await new Promise(resolve => setTimeout(resolve, 1000));
+  
       var produtosRef = collection(db, 'usuarios');
       var q = query(produtosRef, where('email', '==', user.email));
       var querySnapshot = await getDocs(q);
+  
       let dataAtual: Date = new Date();
       let dia: string = String(dataAtual.getDate()).padStart(2, '0');
-      let mes: string = String(dataAtual.getMonth() + 1).padStart(2, '0'); // Os meses do JavaScript começam do 0
+      let mes: string = String(dataAtual.getMonth() + 1).padStart(2, '0');
       let ano: number = dataAtual.getFullYear();
       let dataFormatada: string = dia + '/' + mes + '/' + ano;
   
-      // Crie um array para armazenar as URLs
       const urls = [];
   
-      // Use Promise.all para esperar todas as promessas serem resolvidas
-      await Promise.all(querySnapshot.docs.map(async (doc) => {
-        var data = doc.data();
-        try {
-          const result = await NFSE(
-            '123456789',
-            'Inscrição Estadual ST',
-            data.cnpj,
-            data.nome,
-            data.bairroDistrito,
-            data.cep,
-            dataFormatada,
-            data.endereco,
-            data.cidade,
-            data.uf,
-            data.inscricaoEstadual,
-            produtosSelecionados.length,
-            'caixa',
-            data.telefone,
-            totalSecao,
-            JSON.stringify(produtosSelecionados)
-          );
+      await Promise.all(
+        querySnapshot.docs.map(async (doc) => {
+          var data = doc.data();
+          try {
+            // Simulate a delay of 1 second
+            await new Promise(resolve => setTimeout(resolve, 1000));
   
-          const url = await getUrlPdf(result);
-          urls.push(url);
+            const result = await aleluia(
+              '123456789',
+              'Inscrição Estadual ST',
+              data.cnpj,
+              data.nome,
+              data.bairroDistrito,
+              data.cep,
+              dataFormatada,
+              data.endereco,
+              data.cidade,
+              data.uf,
+              data.inscricaoEstadual,
+              produtosSelecionados.length,
+              'caixa',
+              data.telefone,
+              totalSecao,
+              JSON.stringify(produtosSelecionados)
+            );
+
+            // Simulate a delay of 1 second
+            await new Promise(resolve => setTimeout(resolve, 1000));
   
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      }));
+            const url = await getUrlPdf(result);
+            urls.push(url);
+          } catch (error) {
+            console.error('Error:', error);
+          }
+        })
+      );
   
-      // Atualize o estado diretamente com a última URL (opcional)
       const lastUrl = urls[urls.length - 1];
       setbitera(lastUrl);
   
-      // Aqui você pode usar o array de URLs (urls) conforme necessário
+      // Simulate a delay of 1 second
+      await new Promise(resolve => setTimeout(resolve, 1000));
+  
       console.log('Todas as URLs:', urls);
       console.log('Ultima URL:', lastUrl);
+  
+      // Simulate a delay of 1 second
+      await new Promise(resolve => setTimeout(resolve, 1000));
+  
       getProdutos();
-      navigation.navigate('ProdutosNotas', {lastUrl: lastUrl});
+      navigation.navigate('ProdutosNotas', { lastUrl: lastUrl });
   
       setProdutos([]);
       setProdutosSelecionados([]);
       setTotaisProdutos([]);
       setTotalSecao(0);
-
-      setBotaoTexto('Emitir Nota Fiscal');
-
   
+      setBotaoTexto('Emitir Nota Fiscal');
     } catch (error) {
-      console.error('Erro ao obter produtos:', error);
+      console.error(error);
     }
   };
 
@@ -293,11 +306,16 @@ const NotasScreen = ({ navigation }) => {
       />
 
       {/* Botão para emitir a nota fiscal */}
-      <TouchableOpacity style={styles.emitirButton} onPress={() => {
-          emitirNotaFiscal();
+      <TouchableOpacity style={styles.emitirButton} onPress={async () => {
+        try {
+          await emitirNotaFiscal();
+        } catch (error) {
+          console.error(error);
+        }
       }}>
-          <Text style={styles.buttonText}>{botaoTexto}</Text>
+        <Text style={styles.buttonText}>{botaoTexto}</Text>
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.cancelarButton} onPress={() => {
         // Adicione aqui a lógica para cancelar e zerar os arrays
         setProdutos([]);
@@ -313,7 +331,7 @@ const NotasScreen = ({ navigation }) => {
   );
 };
 
-const Robson = ({ route, navigation }) => {
+const Robson =  ({ route, navigation }) => {
   const { lastUrl} = route.params
   var bites = lastUrl; // Utilize a propriedade lastUrl passada como argumento
   const user = useContext(UserContext);
@@ -325,7 +343,7 @@ const Robson = ({ route, navigation }) => {
       urls: arrayUnion(url)
     });
   };
-
+  
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <TouchableOpacity style={styles.urlButton} onPress={() => {

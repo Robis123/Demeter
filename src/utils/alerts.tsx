@@ -26,6 +26,19 @@ const notaFiscalSucesso = (mensagem: string) => {
   });
 };
 
+const error = () => {
+  console.log("Mensagem recebida:");
+  Toast.show({
+    type: 'success',
+    position: 'bottom',
+    text1: 'error',
+    visibilityTime: 4000,
+    autoHide: true,
+    topOffset: 30,
+    bottomOffset: 40,
+  });
+};
+
 const notaFiscalQtdErro = () => {
   console.log("Mensagem recebida:");
   Toast.show({
@@ -79,4 +92,4 @@ const produtoSalvo = (booleano) => {
   
 
 
-export {cadastradoSucesso, cadastradoAtualizadoSucesso, Toast, produtoSalvo, notaFiscalSucesso, notaFiscalQtdErro};
+export {cadastradoSucesso, cadastradoAtualizadoSucesso, Toast, produtoSalvo, notaFiscalSucesso, notaFiscalQtdErro, error};

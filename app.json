@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "LoginReact",
+    "name": "Deméter",
     "slug": "LoginReact",
     "plugins": [
       "@react-native-google-signin/google-signin"
     ],
-    "version": "1.0.6",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/icon3.png",
     "userInterfaceStyle": "light",
@@ -21,10 +21,10 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 7,
+      "versionCode": 9,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon3.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.tiago.gandra25.LoginReact"
