@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getUrlPdf } from '../utils/pablo';
 
 export default function NFSE(company_ie, company_ie_st, company_cnpj_cpf, client_receiver_name, client_neighborhood, client_cep, invoice_issue, client_address, client_city_name, client_uf, client_ie, transport_amount_transported_volumes, transport_type_volumes_transported, client_phone_number, total, jsonprodutos) {
-    return new Promise((resolve, reject) => {
+    return new Promise( (resolve, reject) => {
         const url = 'http://demetertccbr.online:3000/teste';
         const formData = {
             nl_company_ie: company_ie,

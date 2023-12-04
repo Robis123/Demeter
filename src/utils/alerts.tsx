@@ -26,12 +26,12 @@ const notaFiscalSucesso = (mensagem: string) => {
   });
 };
 
-const error = () => {
-  console.log("Mensagem recebida:");
+const error = (mensagem: string) => {
+  console.log("Mensagem recebida:", mensagem);
   Toast.show({
-    type: 'success',
+    type: 'error',
     position: 'bottom',
-    text1: 'error',
+    text1: mensagem,
     visibilityTime: 4000,
     autoHide: true,
     topOffset: 30,

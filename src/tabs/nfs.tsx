@@ -61,8 +61,7 @@ const NotasScreen = ({ navigation }) => {
     'muda 3': require('../assets/Muda3.png'),
   };
 
-   
-
+  
 
 
   // Função para adicionar um produto à lista
@@ -130,75 +129,165 @@ const NotasScreen = ({ navigation }) => {
     const [storedData, setStoredData] = useState('');
   }
 
-  var emitirNotaFiscal = async () => {
+  // var emitirNotaFiscal = async () => {
+  //   try {
+      
+  //     setBotaoTexto('Loading...');
+  
+  //     // Simulate a delay of 1 second
+  //     // await new Promise(resolve => setTimeout(resolve, 1000));
+  
+  //     var produtosRef = collection(db, 'usuarios');
+  //     var q = query(produtosRef, where('email', '==', user.email));
+  //     var querySnapshot = await getDocs(q);
+  
+  //     let dataAtual: Date = new Date();
+  //     let dia: string = String(dataAtual.getDate()).padStart(2, '0');
+  //     let mes: string = String(dataAtual.getMonth() + 1).padStart(2, '0');
+  //     let ano: number = dataAtual.getFullYear();
+  //     let dataFormatada: string = dia + '/' + mes + '/' + ano;
+
+  //     const urls = [];
+      
+  //     await Promise.all(
+  //       querySnapshot.docs.map(async (doc) => {
+  //         var data = doc.data();
+  //         try {
+  //           const delayedLog = async (message, delay) => {
+  //             setTimeout(() => {
+  //               error(message);
+  //             }, delay);
+  //           };
+
+  //           // Simulate a delay of 1 second
+  //           // await new Promise(resolve => setTimeout(resolve, 1000));
+
+  //           const primeiraString = '123456789';
+  //           const segundaString = 'Inscrição Estadual ST';
+  //           const terceiraString = 'caixa';
+
+  //           const result = await NFSE(
+  //             primeiraString,
+  //             segundaString,
+  //             data.cnpj,
+  //             data.nome,
+  //             data.bairroDistrito,
+  //             data.cep,
+  //             dataFormatada,
+  //             data.endereco,
+  //             data.cidade,
+  //             data.uf,
+  //             data.inscricaoEstadual,
+  //             produtosSelecionados.length,
+  //             terceiraString,
+  //             data.telefone,
+  //             totalSecao,
+  //             JSON.stringify(produtosSelecionados)
+  //           );
+            
+  //           // Simulate a delay of 1 second
+  //           // await new Promise(resolve => setTimeout(resolve, 1000));
+  //           const mensagemresult = `Result: ${result}`;
+  //           error(mensagemresult);
+  //           const url = await getUrlPdf(result);
+  //           urls.push(url);
+
+  //         } catch (error) {
+  //           console.error('Error:', error);
+  //         }
+  //       })
+  //     );
+  
+
+  //     const lastUrl = urls[urls.length - 1];
+  //     setbitera(lastUrl);
+  
+  //     // Simulate a delay of 1 second
+  //     await new Promise(resolve => setTimeout(resolve, 1000));
+      
+  //     // PABLO
+  //     console.log('Todas as URLs:', urls);
+  //     console.log('Ultima URL:', lastUrl);
+
+  //     const mensagem1 = lastUrl
+  //     // PABLO
+  //     error(mensagem1);
+    
+
+  //     Clipboard.setString(lastUrl);
+  //     alert('Link copiado para a área de transferência!');
+  //     attUrls(lastUrl);
+
+  
+  //     getProdutos();
+  //     // navigation.navigate('ProdutosNotas', { lastUrl: lastUrl });
+  
+  //     setProdutos([]);
+  //     setProdutosSelecionados([]);
+  //     setTotaisProdutos([]);
+  //     setTotalSecao(0);
+  
+  //     setTimeout(() => {
+  //       setBotaoTexto('Emitir Nota Fiscal');
+  //     }, 30000)
+
+  //   } catch (error) {
+  //     console.error(error);
+
+  //   }
+  // };
+
+  const emitirNotaFiscal = async () => {
     try {
-      setBotaoTexto('Loading...');
+      setBotaoTexto('Emitindo...');
   
-      // Simulate a delay of 1 second
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const produtosRef = collection(db, 'usuarios');
+      const q = query(produtosRef, where('email', '==', user.email));
+      const querySnapshot = await getDocs(q);
   
-      var produtosRef = collection(db, 'usuarios');
-      var q = query(produtosRef, where('email', '==', user.email));
-      var querySnapshot = await getDocs(q);
+      let dataAtual = new Date();
+      let dia = String(dataAtual.getDate()).padStart(2, '0');
+      let mes = String(dataAtual.getMonth() + 1).padStart(2, '0');
+      let ano = dataAtual.getFullYear();
+      let dataFormatada = `${dia}/${mes}/${ano}`;
   
-      let dataAtual: Date = new Date();
-      let dia: string = String(dataAtual.getDate()).padStart(2, '0');
-      let mes: string = String(dataAtual.getMonth() + 1).padStart(2, '0');
-      let ano: number = dataAtual.getFullYear();
-      let dataFormatada: string = dia + '/' + mes + '/' + ano;
-
       const urls = [];
-
-      await Promise.all(
-        querySnapshot.docs.map(async (doc) => {
-          var data = doc.data();
-          try {
-            // Simulate a delay of 1 second
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const result = await NFSE(
-              '123456789',
-              'Inscrição Estadual ST',
-              data.cnpj,
-              data.nome,
-              data.bairroDistrito,
-              data.cep,
-              dataFormatada,
-              data.endereco,
-              data.cidade,
-              data.uf,
-              data.inscricaoEstadual,
-              produtosSelecionados.length,
-              'caixa',
-              data.telefone,
-              totalSecao,
-              JSON.stringify(produtosSelecionados)
-            );
-
-            // Simulate a delay of 1 second
-            await new Promise(resolve => setTimeout(resolve, 1000));
   
-            const url = await getUrlPdf(result);
-            urls.push(url);
-          } catch (error) {
-            console.error('Error:', error);
-          }
-        })
-      );
+      for (const doc of querySnapshot.docs) {
+        const data = doc.data();
+        const result = await NFSE(
+          '123456789',
+          'Inscrição Estadual ST',
+          data.cnpj,
+          data.nome,
+          data.bairroDistrito,
+          data.cep,
+          dataFormatada,
+          data.endereco,
+          data.cidade,
+          data.uf,
+          data.inscricaoEstadual,
+          produtosSelecionados.length,
+          'caixa',
+          data.telefone,
+          totalSecao,
+          JSON.stringify(produtosSelecionados)
+        );
+  
+        const url = await getUrlPdf(result);
+        urls.push(url);
+      }
+
   
       const lastUrl = urls[urls.length - 1];
       setbitera(lastUrl);
   
-      // Simulate a delay of 1 second
-      await new Promise(resolve => setTimeout(resolve, 1000));
-  
-      console.log('Todas as URLs:', urls);
-      console.log('Ultima URL:', lastUrl);
-  
-      // Simulate a delay of 1 second
-      await new Promise(resolve => setTimeout(resolve, 1000));
-  
       getProdutos();
-      navigation.navigate('ProdutosNotas', { lastUrl: lastUrl });
+      Clipboard.setString(lastUrl);
+      alert('Link copiado para a área de transferência!');
+      attUrls(lastUrl);
+
+      
   
       setProdutos([]);
       setProdutosSelecionados([]);
@@ -207,11 +296,15 @@ const NotasScreen = ({ navigation }) => {
   
       setBotaoTexto('Emitir Nota Fiscal');
     } catch (error) {
-      console.error(error);
+      console.error('Erro ao emitir nota fiscal:', error);
+      const menssagemerror = `Erro ao emitir nota fiscal`;
+      error(menssagemerror);
+      setBotaoTexto('Emitir Nota Fiscal');
     }
   };
-
+  
   useEffect(() => {
+    console.log('Atualizando produtos ao carregar a tela de notas');
     getProdutos();
   }, [user]);
   // Função para obter os produtos do usuário
@@ -230,6 +323,13 @@ const NotasScreen = ({ navigation }) => {
     } catch (error) {
       console.error('Erro ao obter produtos:', error);
     }
+  };
+
+  const attUrls = async (url) => {
+    var userRef = doc(db, 'usuarios', user.uid);
+    await updateDoc(userRef, {
+      urls: arrayUnion(url)
+    });
   };
 
   return (
@@ -316,7 +416,6 @@ const NotasScreen = ({ navigation }) => {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.cancelarButton} onPress={() => {
-        // Adicione aqui a lógica para cancelar e zerar os arrays
         setProdutos([]);
         setProdutosSelecionados([]);
         setTotaisProdutos([]);
@@ -330,45 +429,45 @@ const NotasScreen = ({ navigation }) => {
   );
 };
 
-const Robson =  ({ route, navigation }) => {
-  const { lastUrl} = route.params
-  var bites = lastUrl; // Utilize a propriedade lastUrl passada como argumento
-  const user = useContext(UserContext);
+// const Robson =  ({ route, navigation }) => {
+//   const { lastUrl} = route.params
+//   var bites = lastUrl; // Utilize a propriedade lastUrl passada como argumento
+//   const user = useContext(UserContext);
 
 
-  const attUrls = async (url) => {
-    var userRef = doc(db, 'usuarios', user.uid);
-    await updateDoc(userRef, {
-      urls: arrayUnion(url)
-    });
-  };
+//   const attUrls = async (url) => {
+//     var userRef = doc(db, 'usuarios', user.uid);
+//     await updateDoc(userRef, {
+//       urls: arrayUnion(url)
+//     });
+//   };
   
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <TouchableOpacity style={styles.urlButton} onPress={() => {
-          Linking.openURL(bites);
-          attUrls(bites);
-          setTimeout(() => {
-            navigation.navigate('Notas');
-          }, 2000); // Adicione um atraso de 2 segundos
-        }}>
-        <Ionicons name="download" size={30} color="#fff" />
-        <Text style={styles.urlbuttonText}>Download</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.urlButton} onPress={() => {
-          Clipboard.setString(bites);
-          alert('Link copiado para a área de transferência!');
-          attUrls(bites);
-          setTimeout(() => {
-            navigation.navigate('Notas');
-          }, 2000); // Adicione um atraso de 2 segundos
-        }}>
-        <Ionicons name="copy" size={30} color="#fff" />
-        <Text style={styles.urlbuttonText}>Copiar link</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+//   return (
+//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+//       <TouchableOpacity style={styles.urlButton} onPress={() => {
+//           Linking.openURL(bites);
+//           attUrls(bites);
+//           setTimeout(() => {
+//             navigation.navigate('Notas');
+//           }, 2000); // Adicione um atraso de 2 segundos
+//         }}>
+//         <Ionicons name="download" size={30} color="#fff" />
+//         <Text style={styles.urlbuttonText}>Download</Text>
+//       </TouchableOpacity>
+//       <TouchableOpacity style={styles.urlButton} onPress={() => {
+//           Clipboard.setString(bites);
+//           alert('Link copiado para a área de transferência!');
+//           attUrls(bites);
+//           setTimeout(() => {
+//             navigation.navigate('Notas');
+//           }, 2000); // Adicione um atraso de 2 segundos
+//         }}>
+//         <Ionicons name="copy" size={30} color="#fff" />
+//         <Text style={styles.urlbuttonText}>Copiar link</Text>
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
 
 const handleDownloadPress = (path: string) => {
   // Abra o link no navegador padrão
@@ -379,7 +478,7 @@ const handleDownloadPress = (path: string) => {
 const NotasStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="Notas" component={NotasScreen} options={{ headerTransparent: true, headerTitle: '' }} />
-    <Stack.Screen name="ProdutosNotas" component={Robson} options={{ headerTransparent: true, headerTitle: '' }} />
+    {/* <Stack.Screen name="ProdutosNotas" component={Robson} options={{ headerTransparent: true, headerTitle: '' }} /> */}
   </Stack.Navigator>
 );
 
