@@ -5,9 +5,9 @@
     "plugins": [
       "@react-native-google-signin/google-signin"
     ],
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon3.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -21,7 +21,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 6,
+      "versionCode": 7,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
