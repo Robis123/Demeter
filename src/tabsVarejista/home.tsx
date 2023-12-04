@@ -91,8 +91,8 @@ const PerfilProdutoresScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.subtitle}>Pesquise o produto desejado e será filtrado os produtores correspondentes.  Lembre-se, nós medimos nossos produtos em caixas:</Text>
-
+      <Text style={styles.subtitle}>Pesquise o produto desejado e serão filtrados os produtores correspondentes. </Text>
+      <Text style={styles.subtitle}>Lembre-se, a medição dos produtos é em caixas :)</Text>
       <TextInput
         style={styles.input}
         placeholder="Digite sua pesquisa..."
