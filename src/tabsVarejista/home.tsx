@@ -73,7 +73,7 @@ const PerfilProdutoresScreen = ({ navigation }) => {
     <View>
       <View style={styles.cardProdutores}>
         <Text style={styles.text}>Nome: {item.nome}</Text>
-        <Text style={styles.text}>Localização: {item.uf}</Text>
+        <Text style={styles.text}>Localização: {item.cidade}- {item.uf}</Text>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => {
@@ -122,7 +122,7 @@ const ProdutorProdutosScreen = ({ route }) => {
 
   const images = {
     banana: require('../assets/Banana.png'),
-    maca: require('../assets/Maça.png'),
+    maça: require('../assets/Maça.png'),
     pera: require('../assets/Pera.png'),
     soja: require('../assets/Soja.png'),
     trigo: require('../assets/Trigo.png'),
@@ -134,14 +134,14 @@ const ProdutorProdutosScreen = ({ route }) => {
     leguminosas: require('../assets/Leguminosas.png'),
     hortaliças: require('../assets/Hortaliças.png'),
     'grão de bico': require('../assets/GrãodeBico.png'),
-    feijao: require('../assets/Feijão.png'),
+    feijão: require('../assets/Feijão.png'),
     espinafre: require('../assets/Espinafre.png'),
     ervilha: require('../assets/Ervilha.png'),
     couve: require('../assets/Couve.png'),
     cevada: require('../assets/Cevada.png'),
     cereais: require('../assets/Cereais.png'),
     centeio: require('../assets/Centeio.png'),
-    brócolis: require('../assets/Brócolis.png'),
+    brócoli: require('../assets/Brócolis.png'),
     aveia: require('../assets/Aveia.png'),
     arroz: require('../assets/Arroz.png'),
     amendoim: require('../assets/Amendoim.png'),

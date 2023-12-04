@@ -20,11 +20,13 @@ const NotasScreen = ({ navigation }) => {
   const [totaisProdutos, setTotaisProdutos] = useState([]);
   const [totalSecao, setTotalSecao] = useState(0);
   const [produtosSelecionados, setProdutosSelecionados] = useState([]);
-  const [Bitera, setbitera] = useState()
+  const [Bitera, setbitera] = useState();
+  const [botaoTexto, setBotaoTexto] = useState('Emitir Nota Fiscal');
+
 
   const images = {
     banana: require('../assets/Banana.png'),
-    maca: require('../assets/Maça.png'),
+    maça: require('../assets/Maça.png'),
     pera: require('../assets/Pera.png'),
     soja: require('../assets/Soja.png'),
     trigo: require('../assets/Trigo.png'),
@@ -36,14 +38,14 @@ const NotasScreen = ({ navigation }) => {
     leguminosas: require('../assets/Leguminosas.png'),
     hortaliças: require('../assets/Hortaliças.png'),
     'grão de bico': require('../assets/GrãodeBico.png'),
-    feijao: require('../assets/Feijão.png'),
+    feijão: require('../assets/Feijão.png'),
     espinafre: require('../assets/Espinafre.png'),
     ervilha: require('../assets/Ervilha.png'),
     couve: require('../assets/Couve.png'),
     cevada: require('../assets/Cevada.png'),
     cereais: require('../assets/Cereais.png'),
     centeio: require('../assets/Centeio.png'),
-    brócolis: require('../assets/Brócolis.png'),
+    brócoli: require('../assets/Brócolis.png'),
     aveia: require('../assets/Aveia.png'),
     arroz: require('../assets/Arroz.png'),
     amendoim: require('../assets/Amendoim.png'),
@@ -129,6 +131,8 @@ const NotasScreen = ({ navigation }) => {
 
   var emitirNotaFiscal = async () => {
     try {
+      setBotaoTexto('Loading...');
+
       var produtosRef = collection(db, 'usuarios');
       var q = query(produtosRef, where('email', '==', user.email));
       var querySnapshot = await getDocs(q);
@@ -186,6 +190,9 @@ const NotasScreen = ({ navigation }) => {
       setProdutosSelecionados([]);
       setTotaisProdutos([]);
       setTotalSecao(0);
+
+      setBotaoTexto('Emitir Nota Fiscal');
+
   
     } catch (error) {
       console.error('Erro ao obter produtos:', error);
@@ -289,7 +296,7 @@ const NotasScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.emitirButton} onPress={() => {
           emitirNotaFiscal();
       }}>
-          <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
+          <Text style={styles.buttonText}>{botaoTexto}</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.cancelarButton} onPress={() => {
         // Adicione aqui a lógica para cancelar e zerar os arrays

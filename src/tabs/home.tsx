@@ -7,7 +7,6 @@ import React, { useState, useContext } from "react";
 import { secoes } from "../utils/homeSecoes";
 import UserContext from "../context/userContext";
 import { produtoSalvo, Toast} from "../utils/alerts";
-import { ImageSourcePropType } from "react-native";
 
 
 

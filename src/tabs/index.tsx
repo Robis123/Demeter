@@ -25,7 +25,7 @@ const tabs = [
   },
   {
     id: 2,
-    name: 'NFs', 
+    name: 'NFE', 
     component: Nfs,
     icon: 'calendar'
   },
