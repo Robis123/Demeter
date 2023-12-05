@@ -21,6 +21,7 @@ const NotasScreen = ({ navigation }) => {
   const [totalSecao, setTotalSecao] = useState(0);
   const [produtosSelecionados, setProdutosSelecionados] = useState([]);
   const [Bitera, setbitera] = useState()
+  const [botaoTexto, setBotaoTexto] = useState('Emitir Nota Fiscal');
 
    
 
@@ -95,6 +96,7 @@ const NotasScreen = ({ navigation }) => {
 
   var emitirNotaFiscal = async () => {
     try {
+      setBotaoTexto('Emitindo...');
       var produtosRef = collection(db, 'usuarios');
       var q = query(produtosRef, where('email', '==', user.email));
       var querySnapshot = await getDocs(q);
@@ -134,8 +136,16 @@ const NotasScreen = ({ navigation }) => {
       }));
   
       // Atualize o estado diretamente com a última URL (opcional)
-      const lastUrl = urls[urls.length - 1];
-      setbitera(lastUrl);
+      const lastUrlsim = urls[urls.length - 1];
+
+      console.log('--------> ' + lastUrlsim)
+      alert('antes do setbitera 12')
+      setbitera(lastUrlsim);
+      alert('antes do setbitera 13')
+      const usuarioRef = doc(db, 'usuarios', user.uid);
+      await updateDoc(usuarioRef, { lastUrl: lastUrlsim });
+      getProdutos();
+      navigation.navigate('ProdutosNotas', { lastUrl: lastUrlsim }) 
   
       // Aqui você pode usar o array de URLs (urls) conforme necessário
       console.log('Todas as URLs:', urls);
@@ -147,9 +157,13 @@ const NotasScreen = ({ navigation }) => {
       setProdutosSelecionados([]);
       setTotaisProdutos([]);
       setTotalSecao(0);
+
+      setBotaoTexto('Emitir Nota Fiscal');
   
     } catch (error) {
       console.error('Erro ao obter produtos:', error);
+
+      setBotaoTexto('Emitir Nota Fiscal');
     }
   };
 
@@ -240,7 +254,7 @@ const NotasScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.emitirButton} onPress={() => {
           emitirNotaFiscal();
       }}>
-          <Text style={styles.buttonText}>Emitir Nota Fiscal</Text>
+          <Text style={styles.buttonText}>{botaoTexto}</Text>
       </TouchableOpacity>
       <Toast />
     </View>
@@ -262,20 +276,27 @@ const Robson = ({ route, navigation }) => {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <TouchableOpacity style={styles.urlButton} onPress={() => {
-          Linking.openURL(bites);
+      <TouchableOpacity style={styles.urlButton} onPress={async() => {
+          const usuarioRef = doc(db, 'usuarios', user.uid);
+          const usuarioDoc = await getDoc(usuarioRef);
+          const bites = usuarioDoc.data();
+          console.log(bites.lastUrl)
+          Linking.openURL(bites.lastUrl);
           attUrls(bites);
+          navigation.navigate('Início');
         }}>
         <Ionicons name="download" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Download</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.urlButton} onPress={() => {
-          Clipboard.setString(bites);
+      <TouchableOpacity style={styles.urlButton} onPress={async() => {
+          const usuarioRef = doc(db, 'usuarios', user.uid);
+          const usuarioDoc = await getDoc(usuarioRef);
+          const bites = usuarioDoc.data();
+          console.log(bites.lastUrl)
+          Clipboard.setString(bites.lastUrl);
           alert('Link copiado para a área de transferência!');
           attUrls(bites);
-          setTimeout(() => {
-            navigation.navigate('Notas');
-          }, 2000); // Adicione um atraso de 2 segundos
+          navigation.navigate('Início');
         }}>
         <Ionicons name="copy" size={30} color="#fff" />
         <Text style={styles.urlbuttonText}>Copiar link</Text>
